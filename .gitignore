@@ -1,0 +1,5 @@
+config/
+postgres_data/
+redis-data/
+tmp/
+var.env
