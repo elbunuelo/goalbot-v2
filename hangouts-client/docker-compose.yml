@@ -1,0 +1,22 @@
+version: "3.2"
+services:
+  bot:
+    build: .
+    volumes:
+      - $PWD/config:/root/.local/share/hangupsbot
+      - $PWD/hangupsbot:/app
+    command: python hangupsbot.py
+    restart: always
+    depends_on:
+      - redis
+  redis:
+    image: "redis:alpine"
+    command: redis-server
+    ports:
+      - "6379:6379"
+    volumes:
+      - $PWD/redis-data:/var/lib/redis
+      - $PWD/redis.conf:/usr/local/etc/redis/redis.conf
+    restart: always
+    environment:
+      - REDIS_REPLICATION_MODE=master

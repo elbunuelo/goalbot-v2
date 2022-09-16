@@ -1,0 +1,8 @@
+name: 'Auto Update'
+description: 'Update bot code on push'
+runs:
+  using: "composite"
+  steps: 
+    - run: ${{ github.action_path }}/auto-update.sh
+      shell: bash
+
