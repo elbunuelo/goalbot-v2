@@ -3,3 +3,4 @@ postgres_data/
 redis-data/
 tmp/
 var.env
+.envrc
