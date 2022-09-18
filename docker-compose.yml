@@ -95,7 +95,7 @@ services:
     environment:
       - REDIS_REPLICATION_MODE=master
   hangouts-client:
-    build: /data/opt/goalbot/hangouts-client
+    build: ./hangouts-client
     volumes:
       - ./config:/root/.local/share/hangupsbot
       - ./hangouts-client/hangupsbot:/app
