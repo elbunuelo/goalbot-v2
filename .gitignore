@@ -1,6 +1,6 @@
-config/
-postgres_data/
-redis-data/
+/config/
+/postgres_data/
+/redis-data/
 tmp/
 var.env
 .envrc
