@@ -15,8 +15,8 @@ services:
       - CREATE_DB=${CREATE_DB:-'false'}
       - DISABLE_DATABASE_ENVIRONMENT_CHECK=1
     volumes:
-      - /opt/goalbot/backend:/opt/app
-      - /opt/goalbot/backend:/opt/redd
+      - ./backend:/opt/app
+      - ./redd:/opt/redd
     restart: unless-stopped
     depends_on:
       - redis
@@ -36,8 +36,8 @@ services:
       - CREATE_DB=${CREATE_DB:-'false'}
       - DISABLE_DATABASE_ENVIRONMENT_CHECK=1
     volumes:
-      - /data/opt/goalbot/backend:/opt/app
-      - /data/opt/goalbot/redd:/opt/redd
+      - ./backend:/opt/app
+      - ./redd:/opt/redd
     restart: unless-stopped
     depends_on:
       - redis
@@ -57,8 +57,8 @@ services:
       - CREATE_DB=${CREATE_DB:-'false'}
       - DISABLE_DATABASE_ENVIRONMENT_CHECK=1
     volumes:
-      - /data/opt/goalbot/backend:/opt/app
-      - /data/opt/goalbot/redd:/opt/redd
+      - ./backend:/opt/app
+      - ./redd:/opt/redd
     restart: unless-stopped
     depends_on:
       - redis
@@ -67,16 +67,16 @@ services:
     image: redis
     command: redis-server
     volumes:
-      - /data/opt/goalbot/redis-data:/var/lib/redis
-      - /data/opt/goalbot/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis-data:/var/lib/redis
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
     restart: unless-stopped
     environment:
       - REDIS_REPLICATION_MODE=master
   hangouts-client:
-    build: /data/opt/goalbot/hangouts-client
+    build: ./hangouts-client
     volumes:
-      - /data/opt/goalbot/config:/root/.local/share/hangupsbot
-      - /data/opt/goalbot/hangouts-client/hangupsbot:/app
+      - ./config:/root/.local/share/hangupsbot
+      - ./hangouts-client/hangupsbot:/app
     environment:
       - BOT_BASE_URL=http://rails-bot:${SERVER_PORT}
     command: python hangupsbot.py
@@ -91,4 +91,4 @@ services:
     - PGDATA=/var/lib/postgresql/data/pgdata
     - POSTGRES_DB=goalbot
     volumes:
-      - /data/opt/goalbot/postgres_data:/var/lib/postgresql
+      - ./postgres_data:/var/lib/postgresql

@@ -36,6 +36,7 @@ module Api
       result = _search(team_search) do |candidate|
         next unless candidate['type'] == Api::TEAM
         next unless candidate['entity']['sport']['name'] == Api::FOOTBALL
+        next unless candidate['entity']['gender'] == Api::MALE
 
         true
       end
@@ -45,12 +46,20 @@ module Api
 
     def self.next_event(team)
       url = Api::NEAR_EVENTS_URL.sub '{{team_id}}', team.ss_id
+      Rails.logger.info "Getting near events from #{url}"
       response = HTTParty.get(url)
       events = response.parsed_response
+      previous_event = events['previousEvent']
+      next_event = events['nextEvent']
 
+      if previous_event
+        Rails.logger.info "Previous event: #{previous_event['slug']} - #{previous_event['startTimestamp']}"
+      end
+
+      Rails.logger.info "Next event: #{next_event['slug']} - #{next_event['startTimestamp']}" if next_event
       if events['previousEvent']['status']['type'] == 'inprogress'
         Event.from_hash(events['previousEvent'])
-      elsif Time.at(events['nextEvent']['startTimestamp']).to_date == Date.today
+      elsif next_event && Time.at(events['nextEvent']['startTimestamp']).to_date == Date.today
         Event.from_hash(events['nextEvent'])
       end
     end
