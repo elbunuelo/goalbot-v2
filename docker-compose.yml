@@ -21,6 +21,28 @@ services:
     depends_on:
       - redis
       - db
+  video-finder:
+    image: ruby
+    entrypoint: /opt/app/video-finder-entrypoint.sh
+    environment:
+      - TZ=${TZ}
+      - REDDIT_SECRET=${REDDIT_SECRET}
+      - REDDIT_CLIENT_ID=${REDDIT_CLIENT_ID}
+      - BOT_USER_AGENT="elbunuelo/Goalbot-1.0"
+      - API_URL=${API_URL}
+      - REDIS_URL=${REDIS_URL}
+      - HANGOUTS_CALLBACK_URL=${HANGOUTS_CALLBACK_URL}
+      - HANGOUTS_API_KEY=${HANGOUTS_API_KEY}
+      - SERVER_PORT=${SERVER_PORT}
+      - CREATE_DB=${CREATE_DB:-'false'}
+      - DISABLE_DATABASE_ENVIRONMENT_CHECK=1
+      - RAILS_ENV=${RAILS_ENV:-'development'}
+    volumes:
+      - ./ruby-goalbot:/opt/app
+      - ./redd:/opt/redd
+    restart: unless-stopped
+    depends_on:
+      - rails-bot
   resque:
     image: ruby
     entrypoint: /opt/app/resque-entrypoint.sh
