@@ -38,7 +38,7 @@ services:
       - DISABLE_DATABASE_ENVIRONMENT_CHECK=1
       - RAILS_ENV=${RAILS_ENV:-'development'}
     volumes:
-      - ./ruby-goalbot:/opt/app
+      - ./backend:/opt/app
       - ./redd:/opt/redd
     restart: unless-stopped
     depends_on:
