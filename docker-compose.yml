@@ -15,8 +15,7 @@ services:
       - CREATE_DB=${CREATE_DB:-'false'}
       - DISABLE_DATABASE_ENVIRONMENT_CHECK=1
     volumes:
-      - ./backend:/opt/app
-      - ./redd:/opt/redd
+      - ./:/opt/app
     restart: unless-stopped
     depends_on:
       - redis
@@ -38,8 +37,7 @@ services:
       - DISABLE_DATABASE_ENVIRONMENT_CHECK=1
       - RAILS_ENV=${RAILS_ENV:-'development'}
     volumes:
-      - ./backend:/opt/app
-      - ./redd:/opt/redd
+      - ./:/opt/app
     restart: unless-stopped
     depends_on:
       - rails-bot
@@ -58,8 +56,7 @@ services:
       - CREATE_DB=${CREATE_DB:-'false'}
       - DISABLE_DATABASE_ENVIRONMENT_CHECK=1
     volumes:
-      - ./backend:/opt/app
-      - ./redd:/opt/redd
+      - ./:/opt/app
     restart: unless-stopped
     depends_on:
       - redis
@@ -79,8 +76,7 @@ services:
       - CREATE_DB=${CREATE_DB:-'false'}
       - DISABLE_DATABASE_ENVIRONMENT_CHECK=1
     volumes:
-      - ./backend:/opt/app
-      - ./redd:/opt/redd
+      - ./:/opt/app
     restart: unless-stopped
     depends_on:
       - redis
