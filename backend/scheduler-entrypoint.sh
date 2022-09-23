@@ -1,6 +1,6 @@
-#! /bin/bash 
+#! /bin/bash
 
-cd /opt/app
+cd /opt/app/backend
 bundle install
 
 bin/rake resque:scheduler

@@ -1,6 +1,6 @@
 #! /bin/bash
 
-cd /opt/app
+cd /opt/app/backend
 bundle install
 
 if [ "$CREATE_DB" = 'true' ]; then
