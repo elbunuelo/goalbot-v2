@@ -3,4 +3,4 @@
 cd /opt/app/backend
 bundle install
 
-QUEUE=incidents bin/rake resque:work
+RAILS_ENV=production QUEUE=incidents bin/rake resque:work
