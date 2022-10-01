@@ -37,6 +37,11 @@ class Team < ApplicationRecord
     Rails.logger.info("Exact match found #{team.name}.") if team
 
     unless team
+      Rails.logger.info('Trying short name match')
+      team = find_by_short_name(team_name)
+    end
+
+    unless team
       Rails.logger.info('Trying alias search.')
       team = Team.find_by_alias_name team_name
       Rails.logger.info "Found team by alias: #{team.name}." if team
