@@ -41,7 +41,10 @@ module Api
         true
       end
 
-      Team.from_hash(result['entity']) if result
+      team = Team.from_hash(result['entity']) if result
+      SearchCache.create(search: team_search, team: team) if team
+
+      team
     end
 
     def self.next_event(team)

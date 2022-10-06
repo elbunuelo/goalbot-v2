@@ -4,6 +4,7 @@ services:
     image: ruby
     entrypoint: /opt/app/backend/docker-entrypoint.sh ${SERVER_PORT}
     environment:
+      - TZ=${TZ}
       - REDDIT_SECRET=${REDDIT_SECRET}
       - REDDIT_CLIENT_ID=${REDDIT_CLIENT_ID}
       - BOT_USER_AGENT="elbunuelo/Goalbot-1.0"
@@ -46,6 +47,7 @@ services:
     image: ruby
     entrypoint: /opt/app/backend/resque-entrypoint.sh
     environment:
+      - TZ=${TZ}
       - REDDIT_SECRET=${REDDIT_SECRET}
       - REDDIT_CLIENT_ID=${REDDIT_CLIENT_ID}
       - BOT_USER_AGENT="elbunuelo/Goalbot-1.0"
@@ -67,6 +69,7 @@ services:
     image: ruby
     entrypoint: /opt/app/backend/scheduler-entrypoint.sh
     environment:
+      - TZ=${TZ}
       - REDDIT_SECRET=${REDDIT_SECRET}
       - REDDIT_CLIENT_ID=${REDDIT_CLIENT_ID}
       - BOT_USER_AGENT="elbunuelo/Goalbot-1.0"
@@ -92,6 +95,7 @@ services:
       - ./redis.conf:/usr/local/etc/redis/redis.conf
     restart: unless-stopped
     environment:
+      - TZ=${TZ}
       - REDIS_REPLICATION_MODE=master
   hangouts-client:
     build: ./hangouts-client
@@ -107,9 +111,10 @@ services:
   db:
     image: postgres
     environment:
-    - POSTGRES_USER=postgres
-    - POSTGRES_PASSWORD=goalbot_123
-    - PGDATA=/var/lib/postgresql/data/pgdata
-    - POSTGRES_DB=goalbot
+      - TZ=${TZ}
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=goalbot_123
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - POSTGRES_DB=goalbot
     volumes:
       - ./postgres_data:/var/lib/postgresql

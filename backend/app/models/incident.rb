@@ -12,11 +12,10 @@ class Incident < ApplicationRecord
   scope :default, -> { order(:time) }
 
   def teams_match(goal)
-    home_score = event.home_team.matching_score(goal[:home_team])
-    away_score = event.away_team.matching_score(goal[:away_team])
-    Rails.logger.info "[Incident] Comparing teams #{event.home_team.name} #{goal[:home_team]} (#{home_score}) and #{event.away_team.name} #{goal[:away_team]} (#{away_score})"
+    home_team = Team.search(goal[:home_team])
+    away_team = Team.search(goal[:away_team])
 
-    home_score >= Matching::MIN_MATCH_SCORE && away_score >= Matching::MIN_MATCH_SCORE
+    event.home_team == home_team && event.away_team == away_team
   end
 
   def self.for_goal(goal_info)

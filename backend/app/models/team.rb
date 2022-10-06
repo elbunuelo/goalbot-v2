@@ -38,13 +38,20 @@ class Team < ApplicationRecord
 
     unless team
       Rails.logger.info('Trying short name match')
-      team = find_by_short_name(team_name)
+      team = find_by_short_name team_name
+      Rails.logger.info "Found team by short name: #{team.name}." if team
     end
 
     unless team
       Rails.logger.info('Trying alias search.')
       team = Team.find_by_alias_name team_name
       Rails.logger.info "Found team by alias: #{team.name}." if team
+    end
+
+    unless team
+      Rails.logger.info('Trying search cache match')
+      team = SearchCache.find_by_search team_name
+      Rails.logger.info "Found team in cache search: #{team.name}." if team
     end
 
     unless team
