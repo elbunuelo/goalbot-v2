@@ -29,7 +29,9 @@ module Api
       url = Api::SEARCH_URL.sub '{{search}}', ERB::Util.url_encode(search)
       response = HTTParty.get(url)
 
-      response.parsed_response['results'].detect(&block)
+      Rails.logger.info("Search Response #{response.parsed_response}")
+
+      response.parsed_response['results']&.detect(&block)
     end
 
     def self.search_team(team_search)
