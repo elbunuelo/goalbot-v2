@@ -26,7 +26,8 @@ module Api
     end
 
     def self._search(search, &block)
-      url = Api::SEARCH_URL.sub '{{search}}', ERB::Util.url_encode(search)
+      sanitized_search = search.gsub('/', ' ')
+      url = Api::SEARCH_URL.sub '{{search}}', ERB::Util.url_encode(sanitized_search)
       response = HTTParty.get(url)
 
       Rails.logger.info("Search Response #{response.parsed_response}")
