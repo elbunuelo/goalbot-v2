@@ -50,7 +50,7 @@ class Team < ApplicationRecord
 
     unless team
       Rails.logger.info('Trying search cache match')
-      team = SearchCache.find_by_search(team_name).team
+      team = SearchCache.find_by_search(team_name)&.team
       Rails.logger.info "Found team in cache search: #{team.name}." if team
     end
 
