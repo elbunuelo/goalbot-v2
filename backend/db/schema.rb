@@ -21,8 +21,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_06_132854) do
     t.string "slug"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "home_team_id", null: false
-    t.integer "away_team_id", null: false
+    t.bigint "home_team_id", null: false
+    t.bigint "away_team_id", null: false
     t.date "date"
     t.integer "last_incident_seen"
     t.index ["away_team_id"], name: "index_events_on_away_team_id"
@@ -30,7 +30,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_06_132854) do
   end
 
   create_table "incidents", force: :cascade do |t|
-    t.integer "event_id", null: false
+    t.bigint "event_id", null: false
     t.string "player_name"
     t.string "reason"
     t.string "incident_class"
@@ -64,14 +64,14 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_06_132854) do
 
   create_table "search_caches", force: :cascade do |t|
     t.string "search"
-    t.integer "team_id", null: false
+    t.bigint "team_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["team_id"], name: "index_search_caches_on_team_id"
   end
 
   create_table "subscriptions", force: :cascade do |t|
-    t.integer "event_id", null: false
+    t.bigint "event_id", null: false
     t.string "service"
     t.string "conversation_id"
     t.datetime "created_at", null: false
@@ -80,7 +80,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_06_132854) do
   end
 
   create_table "team_aliases", force: :cascade do |t|
-    t.integer "team_id", null: false
+    t.bigint "team_id", null: false
     t.string "alias"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

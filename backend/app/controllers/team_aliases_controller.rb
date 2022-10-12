@@ -11,21 +11,20 @@ class TeamAliasesController < ApplicationController
     team = Team.search(team_name)
     raise Errors::TeamNotFound, I18n.t(:team_not_found) unless team
 
-    @team_alias = team.team_aliases.build(all_params)
+    @team_alias = TeamAlias.find_by_alias all_params[:alias]
+    record_exists = @team_alias.present?
+
+    @team_alias ||= team.team_aliases.build(all_params)
 
     respond_to do |format|
       if @team_alias.save
         format.json do
-          render json: @team_alias.to_json(
-            {
-              include: {
-                team: {
-                  only: :name
-                }
-              },
-              only: %i[team alias]
-            }
-          ), status: :created
+          if record_exists
+            render json: { message: "Alias #{@team_alias.alias} already exists for #{@team_alias.team.name}" },
+                   status: :ok
+          else
+            render json: { message: "Created alias #{@team_alias.team.name} -> #{@team_alias.alias}" }, status: :created
+          end
         end
       else
         format.json { render json: @team_alias.errors, status: :unprocessable_entity }
