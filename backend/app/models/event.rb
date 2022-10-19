@@ -40,11 +40,11 @@ class Event < ApplicationRecord
   end
 
   def home_score
-    incidents.goals.last&.home_score || 0
+    incidents.goals.first&.home_score || 0
   end
 
   def away_score
-    incidents.goals.last&.away_score || 0
+    incidents.goals.first&.away_score || 0
   end
 
   def start_time
