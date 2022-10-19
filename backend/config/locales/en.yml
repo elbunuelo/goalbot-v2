@@ -36,3 +36,5 @@ en:
   unfollowed_match: "Unfollowed match"
   subscription_not_found: "Couldn't find the subscription"
   match_finished: "Match finished"
+  no_active_subscriptions: "No active subscriptions for today"
+  active_subscriptions: "Active subscriptions"

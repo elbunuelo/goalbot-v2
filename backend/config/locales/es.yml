@@ -6,3 +6,5 @@ es:
   unfollowed_match: "Dejé de seguir el partido"
   subscription_not_found: "No encontré la suscripción"
   match_finished: "Partido terminado"
+  active_subscriptions: "Suscripciones activas"
+  no_active_subscriptions: "No hay suscripciones activas para hoy"

@@ -26,12 +26,12 @@ class SubscriptionsController < ApplicationController
 
   def list
     subscriptions = Subscription.active(params[:service], params[:conversation_id])
-    subscriptions_list = subscriptions.map { |sub| sub.event.title }.join('\n')
+    subscriptions_list = subscriptions.map { |sub| sub.event.title }.join("\n")
 
     if subscriptions.empty?
-      render json: { message: 'No active subscriptions for today' }
+      render json: { message: "#{I18n.t :no_active_subscriptions}" }
     else
-      render json: { message: "Active subscriptions: \n #{subscriptions_list}" }
+      render json: { message: "#{I18n.t :active_subscriptions}\n#{subscriptions_list}" }
     end
   end
 
