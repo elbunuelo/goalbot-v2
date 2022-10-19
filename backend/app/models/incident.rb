@@ -9,7 +9,7 @@ class Incident < ApplicationRecord
                                where(incident_type: Incidents::Types::GOAL, search_suspended: false, video_url: nil)
                              }
 
-  scope :goals, -> { where(incident_type: Incidents::Types::GOAL) }
+  scope :goals, -> { where(incident_type: Incidents::Types::GOAL).order(:time) }
 
   scope :default, -> { order(:time) }
 
