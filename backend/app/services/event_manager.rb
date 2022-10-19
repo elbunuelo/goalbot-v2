@@ -7,13 +7,16 @@ class EventManager
 
     Rails.logger.info("Found event #{event.slug}")
 
+    after_start_time = Time.now >= Time.at(event.start_timestamp)
+    fetch_incidents(event) if after_start_time
+
     event
   end
 
   def self.fetch_incidents(event)
     Resque.logger.info "[Incident Fetch] Fetching incidents for #{event.slug}"
 
-    before_start_time = Time.now.to_i < event.start_timestamp
+    before_start_time = Time.now < Time.at(event.start_timestamp)
 
     if before_start_time
       Resque.logger.info "[Incident Fetch] Event #{event.slug} hasn't started yet"
@@ -27,6 +30,7 @@ class EventManager
       if incident.incident_type == Incidents::Types::PERIOD && incident.text == 'FT'
         Resque.logger.info "[Incident Fetch] Game ended, removing schedule #{event.schedule_name}"
         Resque.remove_schedule(event.schedule_name)
+        event.update(finished: true)
       end
     end
   end

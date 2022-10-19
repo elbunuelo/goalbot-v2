@@ -35,3 +35,4 @@ en:
   team_not_found: "Couldn't find the team"
   unfollowed_match: "Unfollowed match"
   subscription_not_found: "Couldn't find the subscription"
+  match_finished: "Match finished"

@@ -6,7 +6,7 @@ Rails.application.routes.draw do
     resources :team_aliases, only: [:create]
     resources :subscriptions, only: [:create]
     delete 'subscriptions', to: 'subscriptions#destroy'
-    get 'subscriptions/:client/:conv_id', to: 'subscriptions#list'
+    get 'subscriptions/:service/:conversation_id', to: 'subscriptions#list'
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

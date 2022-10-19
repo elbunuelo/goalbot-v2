@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_10_06_132854) do
+ActiveRecord::Schema[7.0].define(version: 2022_10_19_004828) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -25,6 +25,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_06_132854) do
     t.bigint "away_team_id", null: false
     t.date "date"
     t.integer "last_incident_seen"
+    t.boolean "finished"
     t.index ["away_team_id"], name: "index_events_on_away_team_id"
     t.index ["home_team_id"], name: "index_events_on_home_team_id"
   end

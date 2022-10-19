@@ -1,7 +1,7 @@
 class SubscriptionsController < ApplicationController
   include Internationalized
   around_action :switch_locale
-  before_action :set_event
+  before_action :set_event, except: [:list]
 
   skip_before_action :verify_authenticity_token
 
@@ -11,7 +11,9 @@ class SubscriptionsController < ApplicationController
   def create
     subscription = @event.subscriptions.find_or_initialize_by(subscription_params)
 
-    render json: { message: "#{I18n.t :following_match} #{subscription.event.title}" } if subscription.save
+    message = @event.finished ? I18n.t(:match_finished) : I18n.t(:following_match)
+
+    render json: { message: "#{message}\n#{subscription.event.title}" } if subscription.save
   end
 
   def destroy
@@ -20,6 +22,17 @@ class SubscriptionsController < ApplicationController
     render json: { message: "#{I18n.t :unfollowed_match} #{@event.title}" } if subscription.destroy
   rescue ActiveRecord::RecordNotFound
     render json: { message: "#{I18n.t :subscription_not_found}" }
+  end
+
+  def list
+    subscriptions = Subscription.active(params[:service], params[:conversation_id])
+    subscriptions_list = subscriptions.map { |sub| sub.event.title }.join('\n')
+
+    if subscriptions.empty?
+      render json: { message: 'No active subscriptions for today' }
+    else
+      render json: { message: "Active subscriptions: \n #{subscriptions_list}" }
+    end
   end
 
   private

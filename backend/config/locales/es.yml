@@ -5,3 +5,4 @@ es:
   team_not_found: "No encontré el equipo"
   unfollowed_match: "Dejé de seguir el partido"
   subscription_not_found: "No encontré la suscripción"
+  match_finished: "Partido terminado"

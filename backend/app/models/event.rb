@@ -13,8 +13,42 @@ class Event < ApplicationRecord
     "#{slug}-#{date}"
   end
 
+  def playing?
+    Time.at(start_timestamp) < Time.now && !finished
+  end
+
+  def emoji
+    if finished
+      '🏁'
+    elsif playing?
+      '⚽'
+    end
+  end
+
   def title
-    "#{home_team.name} - #{away_team.name}"
+    full_title = []
+    full_title << emoji
+    full_title << "[#{start_time}]" unless playing? || finished
+    full_title << home_team.name
+
+    full_title << home_score if playing? || finished
+    full_title << '-'
+    full_title << away_score if playing? || finished
+
+    full_title << away_team.name
+    full_title.join(' ')
+  end
+
+  def home_score
+    incidents.goals.last&.home_score || 0
+  end
+
+  def away_score
+    incidents.goals.last&.away_score || 0
+  end
+
+  def start_time
+    Time.at(start_timestamp).strftime('%H:%M:%S')
   end
 
   def self.from_hash(event_data)

@@ -4,6 +4,16 @@ class Subscription < ApplicationRecord
   # after_create :schedule_incident_fetch
   after_save :schedule_incident_fetch
 
+  scope :active, lambda { |service, conversation_id|
+    joins(:event)
+      .where(
+        service: service,
+        conversation_id: conversation_id,
+        'event.date' => Date.today
+      )
+      .order('event.start_timestamp')
+  }
+
   private
 
   def schedule_incident_fetch
