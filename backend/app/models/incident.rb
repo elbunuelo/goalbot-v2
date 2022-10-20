@@ -3,7 +3,8 @@ class Incident < ApplicationRecord
 
   before_create :maybe_set_searching_since
   after_create :maybe_schedule_search_cancellation
-  after_update :maybe_send_subscription_messages
+  after_save :maybe_cancel_message_sending
+  after_update :maybe_schedule_send_subscription_messages
 
   scope :goals_pending_link, lambda {
                                where(incident_type: Incidents::Types::GOAL, search_suspended: false, video_url: nil)
@@ -37,7 +38,9 @@ class Incident < ApplicationRecord
     message += ' ⚽' unless is_home
     message += " #{event.away_team.name}  "
     message += "#{player_name} " if player_name
-    message + "- #{video_url}"
+    message += time
+    message += "+#{added_time}" if added_time
+    message + "' | #{video_url}"
   end
 
   private
@@ -55,29 +58,30 @@ class Incident < ApplicationRecord
     Resque.enqueue_in(Incidents::MAX_SEARCH_TIME, CancelGoalSearch, id)
   end
 
-  def maybe_send_subscription_messages
-    return if notifications_sent
+  def maybe_cancel_message_sending
+    unless incident_type == Incidents::Types::VAR_DECISION && incident_class == Incidents::Classes::GOAL_NOT_AWARDED
+      return
+    end
+
+    goal = event.incidents
+                .where('id < ?', id)
+                .where('(time + COALESCE(added_time, 0)) >= ?', time + added_time - Incidents::MAX_VAR_DIFFERENCE)
+                .where(player_name: player_name)
+                .where(incident_type: Incidents::Types::GOAL)
+                .first
+
+    return unless goal
+
+    goal.search_suspended = true
+    goal.save
+  end
+
+  def maybe_schedule_send_subscription_messages
+    return if notifications_sent || search_suspended
     return unless incident_type == Incidents::Types::GOAL
     return unless video_url
 
-    event.subscriptions.each do |subscription|
-      next unless subscription.conversation_id.present?
-
-      Rails.logger.info('[Incident] Sending http request to bot')
-      response = HTTParty.post(
-        configatron.hangouts.callback_url,
-        {
-          body: { sendto: subscription.conversation_id, key: configatron.hangouts.api_key,
-                  content: video_message }.to_json,
-          headers: { 'Content-Type' => 'application/json' },
-          verify: false
-        }
-      )
-      Rails.logger.info("[Incident] Response received #{response.code} - #{response.parsed_response}")
-    end
-
-    self.notifications_sent = true
-    save
+    Resque.enqueue_in(Incidents::VAR_WAIT_TIME, SendSubscriptionMessages, id)
   end
 
   def self.from_hash(incident_data)
@@ -102,11 +106,9 @@ class Incident < ApplicationRecord
       }
     )
 
-    unless new_incident.ss_id
-      new_incident.ss_id = incident_data['id']
-      new_incident.player_name = player_name
-      new_incident.save
-    end
+    new_incident.ss_id ||= incident_data['id']
+    new_incident.player_name ||= player_name
+    new_incident.save
 
     new_incident
   end
