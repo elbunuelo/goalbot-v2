@@ -1,3 +1,0 @@
-[submodule "hangupsbot/locale"]
-	path = hangupsbot/locale
-        url = https://github.com/hangoutsbot/hangoutsbot-locales.git

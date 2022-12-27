@@ -13,15 +13,17 @@ task fetch_goal_video_links: :environment do
     goal = match_goal submission.title
     next unless goal
 
-    candidate_incidents = Incident.for_goal(goal)
-    Rails.logger.info "[GoalVideoLinks] Found #{candidate_incidents.count} candidates for #{goal[:home_team]} #{goal[:home_score]} - #{goal[:away_score]} #{goal[:away_team]}"
-    candidate_incidents.each do |incident|
-      Rails.logger.info "[GoalVideoLinks] Checking against #{incident.event.home_team.name} #{incident.home_score} - #{incident.away_score} #{incident.event.away_team.name}"
-      next unless incident.teams_match(goal)
+    home_team_event = EventManager.find_matching(goal[:home_team])
+    away_team_event = EventManager.find_matching(goal[:away_team])
+    next unless home_team_event == away_team_event
 
-      Rails.logger.info "[GoalVideoLinks] Goal video found for #{incident.event.home_team.name} #{incident.home_score} - #{incident.away_score} #{incident.event.away_team.name} --  #{submission.url}"
-      incident.video_url = submission.url
-      incident.save
-    end
+    incident = home_team_event.incidents.find_pending_link_by_score(goal[:home_score], goal[:away_score])
+    next unless incident
+
+    pp incident
+
+    Rails.logger.info "[GoalVideoLinks] Goal video found for #{incident.event.home_team.name} #{incident.home_score} - #{incident.away_score} #{incident.event.away_team.name} --  #{submission.url}"
+    incident.video_url = submission.url
+    incident.save
   end
 end

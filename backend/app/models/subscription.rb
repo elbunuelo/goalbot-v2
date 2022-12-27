@@ -1,7 +1,6 @@
 class Subscription < ApplicationRecord
   belongs_to :event
 
-  # after_create :schedule_incident_fetch
   after_save :schedule_incident_fetch
 
   scope :active, lambda { |service, conversation_id|

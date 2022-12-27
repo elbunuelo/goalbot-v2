@@ -50,7 +50,7 @@ module Api
       team
     end
 
-    def self.next_event(team)
+    def self.todays_event(team)
       url = Api::NEAR_EVENTS_URL.sub '{{team_id}}', team.ss_id
       Rails.logger.info "Getting near events from #{url}"
       response = HTTParty.get(url)

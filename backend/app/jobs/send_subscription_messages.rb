@@ -8,6 +8,11 @@ class SendSubscriptionMessages
       return
     end
 
+    if incident.notifications_sent
+      Resque.logger.info('[SendSubscriptionMessages] This goal has already been processed, skipping.')
+      return
+    end
+
     incident.event.subscriptions.each do |subscription|
       next unless subscription.conversation_id.present?
 

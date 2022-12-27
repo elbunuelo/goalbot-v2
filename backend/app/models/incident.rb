@@ -6,29 +6,13 @@ class Incident < ApplicationRecord
   after_save :maybe_cancel_message_sending
   after_update :maybe_schedule_send_subscription_messages
 
-  scope :goals_pending_link, lambda {
-                               where(incident_type: Incidents::Types::GOAL, search_suspended: false, video_url: nil)
-                             }
-
   scope :goals, -> { where(incident_type: Incidents::Types::GOAL).order(:time) }
+  scope :goals_pending_link, -> { goals.where(search_suspended: false, video_url: nil) }
 
   scope :default, -> { order(:time) }
 
-  def teams_match(goal)
-    home_team = Team.search(goal[:home_team])
-    away_team = Team.search(goal[:away_team])
-
-    event.home_team == home_team && event.away_team == away_team
-  end
-
-  def self.for_goal(goal_info)
-    Incident.goals_pending_link.where(
-      {
-        # is_home: goal_info[:is_home],
-        home_score: goal_info[:home_score],
-        away_score: goal_info[:away_score]
-      }
-    )
+  def self.find_pending_link_by_score(home_score, away_score)
+    goals_pending_link.where(home_score: home_score, away_score: away_score).first
   end
 
   def video_message
@@ -38,7 +22,7 @@ class Incident < ApplicationRecord
     message += ' ⚽' unless is_home
     message += " #{event.away_team.name}  "
     message += "#{player_name} " if player_name
-    message += time
+    message += time.to_s
     message += "+#{added_time}" if added_time
     message + "' | #{video_url}"
   end
@@ -81,7 +65,7 @@ class Incident < ApplicationRecord
     return unless incident_type == Incidents::Types::GOAL
     return unless video_url
 
-    Resque.enqueue_in(Incidents::VAR_WAIT_TIME, SendSubscriptionMessages, id)
+    Resque.enqueue(SendSubscriptionMessages, id)
   end
 
   def self.from_hash(incident_data)

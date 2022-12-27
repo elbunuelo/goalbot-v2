@@ -2,7 +2,9 @@ class EventManager
   def self.find_matching(search)
     team = Team.search search
 
-    event = Api::Client.next_event team
+    event = Event.find_team_event_today(team)
+    Rails.logger.info('[Event Search] Found event in database.') if event
+    event ||= Api::Client.todays_event team
     raise Errors::EventNotFound, "No Events for #{search} found." unless event
 
     Rails.logger.info("Found event #{event.slug}")
