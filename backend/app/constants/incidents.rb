@@ -1,6 +1,6 @@
 module Incidents
   # Maximum amount of time before giving up on the video search for a goal
-  MAX_SEARCH_TIME = 5.minutes
+  MAX_SEARCH_TIME = 10.minutes
 
   # Time difference (in minutes) within which a goal invalidation can be found.
   MAX_VAR_DIFFERENCE = 2
