@@ -38,3 +38,6 @@ en:
   match_finished: "Match finished"
   no_active_subscriptions: "No active subscriptions for today"
   active_subscriptions: "Active subscriptions"
+  could_not_create_subscription: "Could not create subscription"
+  could_not_destroy_subscription: "Could not destroy subscription"
+  hello: "Hi"

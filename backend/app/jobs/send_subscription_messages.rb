@@ -16,17 +16,9 @@ class SendSubscriptionMessages
     incident.event.subscriptions.each do |subscription|
       next unless subscription.conversation_id.present?
 
-      Resque.logger.info('[SendSubscriptionMessages] Sending http request to bot')
-      response = HTTParty.post(
-        configatron.hangouts.callback_url,
-        {
-          body: { sendto: subscription.conversation_id, key: configatron.hangouts.api_key,
-                  content: incident.video_message }.to_json,
-          headers: { 'Content-Type' => 'application/json' },
-          verify: false
-        }
-      )
-      Resque.logger.info("[SendSubscriptionMessages] Response received #{response.code} - #{response.parsed_response}")
+      Telegram::Bot::Client.run(configatron.telegram_token) do |bot|
+        bot.api.send_message(chat_id: subscription.conversation_id, text: incident.video_message)
+      end
     end
 
     incident.notifications_sent = true

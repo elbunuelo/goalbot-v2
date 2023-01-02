@@ -9,41 +9,24 @@ class SubscriptionsController < ApplicationController
   rescue_from Errors::TeamNotFound, with: :render_not_found
 
   def create
-    subscription = @event.subscriptions.find_or_initialize_by(subscription_params)
+    message = SubscriptionManager.create_subscription(params[:subscription][:team], subscription_params)
 
-    message = @event.finished ? I18n.t(:match_finished) : I18n.t(:following_match)
-
-    render json: { message: "#{message}\n#{subscription.event.title}" } if subscription.save
+    render json: { message: message }
   end
 
   def destroy
-    subscription = @event.subscriptions.find_by!(subscription_params)
+    message = SubscriptionManager.delete_subscription(params[:subscription][:team], subscription_params)
 
-    render json: { message: "#{I18n.t :unfollowed_match} #{@event.title}" } if subscription.destroy
-  rescue ActiveRecord::RecordNotFound
-    render json: { message: "#{I18n.t :subscription_not_found}" }
+    render json: { message: message }
   end
 
   def list
-    subscriptions = Subscription.active(params[:service], params[:conversation_id])
-    subscriptions_list = subscriptions.map { |sub| sub.event.title }.join("\n")
+    message = SubscriptionManager.list_active_subscriptions(subscription_params)
 
-    if subscriptions.empty?
-      render json: { message: "#{I18n.t :no_active_subscriptions}" }
-    else
-      render json: { message: "#{I18n.t :active_subscriptions}\n#{subscriptions_list}" }
-    end
+    render json: { message: message }
   end
 
   private
-
-  def set_event
-    search_team = params[:subscription][:team]
-    Rails.logger.info("Searching events matching #{search_team}")
-
-    @event = EventManager.find_matching search_team
-    raise Errors::EventNotFound, I18n.t(:match_not_found) unless @event
-  end
 
   def subscription_params
     params.require(:subscription).permit(:service, :conversation_id)

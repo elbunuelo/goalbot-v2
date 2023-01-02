@@ -10,12 +10,11 @@ services:
       - BOT_USER_AGENT="elbunuelo/Goalbot-1.0"
       - API_URL=${API_URL}
       - REDIS_URL=${REDIS_URL}
-      - HANGOUTS_CALLBACK_URL=${HANGOUTS_CALLBACK_URL}
-      - HANGOUTS_API_KEY=${HANGOUTS_API_KEY}
       - SERVER_PORT=${SERVER_PORT}
       - CREATE_DB=${CREATE_DB:-'false'}
       - DISABLE_DATABASE_ENVIRONMENT_CHECK=1
       - RAILS_ENV=${RAILS_ENV:-'production'}
+      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
     volumes:
       - ./:/opt/app
     restart: unless-stopped
@@ -32,12 +31,31 @@ services:
       - BOT_USER_AGENT="elbunuelo/Goalbot-1.0"
       - API_URL=${API_URL}
       - REDIS_URL=${REDIS_URL}
-      - HANGOUTS_CALLBACK_URL=${HANGOUTS_CALLBACK_URL}
-      - HANGOUTS_API_KEY=${HANGOUTS_API_KEY}
       - SERVER_PORT=${SERVER_PORT}
       - CREATE_DB=${CREATE_DB:-'false'}
       - DISABLE_DATABASE_ENVIRONMENT_CHECK=1
       - RAILS_ENV=${RAILS_ENV:-'production'}
+      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
+    volumes:
+      - ./:/opt/app
+    restart: unless-stopped
+    depends_on:
+      - bot
+  telegram-client:
+    image: ruby
+    entrypoint: /opt/app/backend/telegram-client-entrypoint.sh
+    environment:
+      - TZ=${TZ}
+      - REDDIT_SECRET=${REDDIT_SECRET}
+      - REDDIT_CLIENT_ID=${REDDIT_CLIENT_ID}
+      - BOT_USER_AGENT="elbunuelo/Goalbot-1.0"
+      - API_URL=${API_URL}
+      - REDIS_URL=${REDIS_URL}
+      - SERVER_PORT=${SERVER_PORT}
+      - CREATE_DB=${CREATE_DB:-'false'}
+      - DISABLE_DATABASE_ENVIRONMENT_CHECK=1
+      - RAILS_ENV=${RAILS_ENV:-'production'}
+      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
     volumes:
       - ./:/opt/app
     restart: unless-stopped
@@ -53,12 +71,11 @@ services:
       - BOT_USER_AGENT="elbunuelo/Goalbot-1.0"
       - API_URL=${API_URL}
       - REDIS_URL=${REDIS_URL}
-      - HANGOUTS_CALLBACK_URL=${HANGOUTS_CALLBACK_URL}
-      - HANGOUTS_API_KEY=${HANGOUTS_API_KEY}
       - SERVER_PORT=${SERVER_PORT}
       - CREATE_DB=${CREATE_DB:-'false'}
       - DISABLE_DATABASE_ENVIRONMENT_CHECK=1
       - RAILS_ENV=${RAILS_ENV:-'production'}
+      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
     volumes:
       - ./:/opt/app
     restart: unless-stopped
@@ -75,12 +92,11 @@ services:
       - BOT_USER_AGENT="elbunuelo/Goalbot-1.0"
       - API_URL=${API_URL}
       - REDIS_URL=${REDIS_URL}
-      - HANGOUTS_CALLBACK_URL=${HANGOUTS_CALLBACK_URL}
-      - HANGOUTS_API_KEY=${HANGOUTS_API_KEY}
       - SERVER_PORT=${SERVER_PORT}
       - CREATE_DB=${CREATE_DB:-'false'}
       - DISABLE_DATABASE_ENVIRONMENT_CHECK=1
       - RAILS_ENV=${RAILS_ENV:-'production'}
+      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
     volumes:
       - ./:/opt/app
     restart: unless-stopped
@@ -97,17 +113,6 @@ services:
     environment:
       - TZ=${TZ}
       - REDIS_REPLICATION_MODE=master
-  hangouts-client:
-    build: ./hangouts-client
-    volumes:
-      - ./config:/root/.local/share/hangupsbot
-      - ./hangouts-client/hangupsbot:/app
-    environment:
-      - BOT_BASE_URL=http://bot:${SERVER_PORT}
-    command: python hangupsbot.py
-    restart: unless-stopped
-    depends_on:
-      - redis
   db:
     image: postgres
     environment:

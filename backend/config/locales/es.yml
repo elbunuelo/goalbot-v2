@@ -8,3 +8,6 @@ es:
   match_finished: "Partido terminado"
   active_subscriptions: "Suscripciones activas"
   no_active_subscriptions: "No hay suscripciones activas para hoy"
+  could_not_create_subscription: "No es posible crear la suscripción"
+  could_not_destroy_subscription: "No es posible eliminar la suscripción"
+  hello: "Hola"

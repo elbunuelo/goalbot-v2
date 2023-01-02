@@ -1,5 +1,6 @@
 class EventManager
   def self.find_matching(search)
+    Rails.logger.info("[Event Search] Searching events matching #{search}")
     team = Team.search search
 
     event = Event.find_team_event_today(team)
@@ -7,10 +8,12 @@ class EventManager
     event ||= Api::Client.todays_event team
     raise Errors::EventNotFound, "No Events for #{search} found." unless event
 
-    Rails.logger.info("Found event #{event.slug}")
+    Rails.logger.info("[Event Search] Found event #{event.slug}")
 
     after_start_time = Time.now >= Time.at(event.start_timestamp)
     fetch_incidents(event) if after_start_time
+
+    raise Errors::EventNotFound, I18n.t(:match_not_found) unless event
 
     event
   end

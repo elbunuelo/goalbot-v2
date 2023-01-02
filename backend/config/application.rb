@@ -31,8 +31,7 @@ module RubyGoalbot
 
     configatron.redis.url = ENV['REDIS_URL'].freeze
 
-    configatron.hangouts.callback_url = ENV['HANGOUTS_CALLBACK_URL'].freeze
-    configatron.hangouts.api_key = ENV['HANGOUTS_API_KEY'].freeze
+    configatron.telegram_token = ENV['TELEGRAM_TOKEN'].freeze
 
     config.sass.preferred_syntax = :sass
     config.sass.line_comments = false
