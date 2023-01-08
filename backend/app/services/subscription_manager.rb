@@ -28,12 +28,12 @@ class SubscriptionManager
   end
 
   def self.list_active_subscriptions(subscription_params)
-    subscriptions = Subscription.active(subscription_params[:service_name], subscription_params[:conversation_id])
-    subscriptions_list = subscriptions.map { |sub| sub.event.title }.join("\n")
+    subscriptions = Subscription.active(subscription_params[:service], subscription_params[:conversation_id])
 
     if subscriptions.empty?
       "#{I18n.t :no_active_subscriptions}"
     else
+      subscriptions_list = subscriptions.map { |sub| sub.event.title }.join("\n")
       "#{I18n.t :active_subscriptions}\n#{subscriptions_list}"
     end
   end
