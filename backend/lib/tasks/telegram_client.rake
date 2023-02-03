@@ -4,12 +4,14 @@ HELP_TEXT = <<~HELP
   /seguir <equipo> - Busca y monitorea un partido. e.j. /seguir Liverpool
   /dejar <equipo> - Deja de monitorear un partido.
   /subs - Lista las suscripciones activas.
+  /alias <equipo>::<alias> - Crea un alias para un equipo.
   /help - Mostrar ayuda.
 HELP
 
 SERVICE_NAME = 'Telegram'
 
 TELEGRAM_TEAM_REGEX = '(?<team>.+)'
+TELEGRAM_ALIAS_REGEX = "#{TELEGRAM_TEAM_REGEX}::(?<alias>.+)"
 
 OPTIONAL_BOT_REGEX =
   def action_regex(keywords, action_params = [])
@@ -21,10 +23,11 @@ OPTIONAL_BOT_REGEX =
 
 ACTIONS = {
   follow: action_regex(%w[follow seguir], [TELEGRAM_TEAM_REGEX]),
-  unfollow: action_regex(%w[unfollow dejar], [TELEGRAM_TEAM_REGEX]),
-  hello: action_regex(%w[hello hola]),
-  help: action_regex(%w[help ayuda]),
-  subs: action_regex(%w[subs suscripciones])
+  unfollow: action_regex(%w[unfollow dejar parar], [TELEGRAM_TEAM_REGEX]),
+  alias: action_regex(%w[alias], [TELEGRAM_ALIAS_REGEX]),
+  hello: action_regex(%w[hello hola oi]),
+  help: action_regex(%w[help ayuda ajuda]),
+  subs: action_regex(%w[subs suscripciones assinaturas]),
 
 }
 
@@ -69,7 +72,9 @@ task telegram_client: :environment do
         bot.api.send_message(chat_id: chat_id, text: message)
       end
 
-      action :hello, message do
+      action :hello, message do |params|
+
+        Rails.logger.info "[Telegram Client] Creating alias #{params[:team]}"
         bot.api.send_message(chat_id: chat_id, text: "#{I18n.t :hello}, #{message.from.first_name}!")
       end
 
@@ -80,6 +85,11 @@ task telegram_client: :environment do
       action :subs, message do
         message = SubscriptionManager.list_active_subscriptions(subscription_params)
 
+        bot.api.send_message(chat_id: chat_id, text: message)
+      end
+
+      action :alias, message do|params|
+        message = AliasManager.create_alias(params[:team], params[:alias])
         bot.api.send_message(chat_id: chat_id, text: message)
       end
     end

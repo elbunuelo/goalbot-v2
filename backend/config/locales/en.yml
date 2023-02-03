@@ -41,3 +41,5 @@ en:
   could_not_create_subscription: "Could not create subscription"
   could_not_destroy_subscription: "Could not destroy subscription"
   hello: "Hi"
+  created_alias: "Created alias"
+  alias_already_exists: "Alias %{alias} already exists for %{team}"

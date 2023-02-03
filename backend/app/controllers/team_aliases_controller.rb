@@ -14,16 +14,15 @@ class TeamAliasesController < ApplicationController
     @team_alias = TeamAlias.find_by_alias all_params[:alias]
     record_exists = @team_alias.present?
 
-    @team_alias ||= team.team_aliases.build(all_params)
+    message = AliasManager.create_alias team_name, all_params[:team_alias]
 
     respond_to do |format|
       if @team_alias.save
         format.json do
           if record_exists
-            render json: { message: "Alias #{@team_alias.alias} already exists for #{@team_alias.team.name}" },
-                   status: :ok
+            render json: { message: message}, status: :ok
           else
-            render json: { message: "Created alias #{@team_alias.team.name} -> #{@team_alias.alias}" }, status: :created
+            render json: { message: message }, status: :created
           end
         end
       else

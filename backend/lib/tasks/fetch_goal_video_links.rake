@@ -13,9 +13,13 @@ task fetch_goal_video_links: :environment do
     goal = match_goal submission.title
     next unless goal
 
-    home_team_event = EventManager.find_matching(goal[:home_team])
-    away_team_event = EventManager.find_matching(goal[:away_team])
-    next unless home_team_event == away_team_event
+    begin
+      home_team_event = EventManager.find_matching(goal[:home_team])
+      away_team_event = EventManager.find_matching(goal[:away_team])
+      next unless home_team_event == away_team_event
+    rescue Errors::EventNotFound
+      next
+    end
 
     incident = home_team_event.incidents.find_pending_link_by_score(goal[:home_score], goal[:away_score])
     next unless incident

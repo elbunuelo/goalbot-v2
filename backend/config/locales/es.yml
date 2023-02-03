@@ -11,3 +11,5 @@ es:
   could_not_create_subscription: "No es posible crear la suscripción"
   could_not_destroy_subscription: "No es posible eliminar la suscripción"
   hello: "Hola"
+  created_alias: "Alias creado"
+  alias_already_exists: "El alias %{alias} ya existe para %{team}"

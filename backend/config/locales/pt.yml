@@ -10,3 +10,5 @@ es:
   could_not_create_subscription: "Nāo é possível criar a assinatura"
   could_not_destroy_subscription: "Nāo é possível remover a assinatura"
   hello: "Oi"
+  created_alias: "Alias criado"
+  alias_already_exists: "O alias %{alias} já existe para %{team}"
