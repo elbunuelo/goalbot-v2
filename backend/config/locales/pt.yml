@@ -1,0 +1,12 @@
+es:
+  following_match: "Seguindo jogo"
+  match_not_found: "Não encontrei o jogo"
+  team_not_found: "Não encontrei a equipe"
+  unfollowed_match: "Parei de seguir o jogo"
+  subscription_not_found: "Não encontrei a assinatura"
+  match_finished: "Jogo terminado"
+  active_subscriptions: "Assinaturas ativas"
+  no_active_subscriptions: "Não há assinaturas ativas para hoje"
+  could_not_create_subscription: "Nāo é possível criar a assinatura"
+  could_not_destroy_subscription: "Nāo é possível remover a assinatura"
+  hello: "Oi"
