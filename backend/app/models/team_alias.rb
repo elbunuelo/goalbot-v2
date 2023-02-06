@@ -5,6 +5,6 @@ class TeamAlias < ApplicationRecord
   private
 
   def downcase_alias
-    self.alias.downcase!
+    self.alias&.downcase!
   end
 end
