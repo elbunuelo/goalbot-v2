@@ -87,7 +87,7 @@ task telegram_client: :environment do
       end
 
       action :alias, message do |params|
-        Rails.logger.info "[Telegram Client] Creating alias #{params[:team]}"
+        Rails.logger.info "[Telegram Client] Creating alias #{params[:team]} #{params[:alias]}"
         message = AliasManager.create_alias(params[:team], params[:alias])
         bot.api.send_message(chat_id:, text: message)
       end
