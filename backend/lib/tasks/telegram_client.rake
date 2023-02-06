@@ -27,7 +27,7 @@ ACTIONS = {
   alias: action_regex(%w[alias], [TELEGRAM_ALIAS_REGEX]),
   hello: action_regex(%w[hello hola oi]),
   help: action_regex(%w[help ayuda ajuda]),
-  subs: action_regex(%w[subs suscripciones assinaturas]),
+  subs: action_regex(%w[subs suscripciones assinaturas])
 
 }
 
@@ -62,35 +62,34 @@ task telegram_client: :environment do
         Rails.logger.info "[Telegram Client] Following match with search #{params[:team]}"
         message = SubscriptionManager.create_subscription(params[:team], subscription_params)
 
-        bot.api.send_message(chat_id: chat_id, text: message)
+        bot.api.send_message(chat_id:, text: message)
       end
 
       action :unfollow, message do |params|
         Rails.logger.info "[Telegram Client] Unollowing match with search #{params[:team]}"
         message = SubscriptionManager.delete_subscription(params[:team], subscription_params)
 
-        bot.api.send_message(chat_id: chat_id, text: message)
+        bot.api.send_message(chat_id:, text: message)
       end
 
-      action :hello, message do |params|
-
-        Rails.logger.info "[Telegram Client] Creating alias #{params[:team]}"
-        bot.api.send_message(chat_id: chat_id, text: "#{I18n.t :hello}, #{message.from.first_name}!")
+      action :hello, message do |_params|
+        bot.api.send_message(chat_id:, text: "#{I18n.t :hello}, #{message.from.first_name}!")
       end
 
       action :help, message do
-        bot.api.send_message(chat_id: chat_id, text: HELP_TEXT)
+        bot.api.send_message(chat_id:, text: HELP_TEXT)
       end
 
       action :subs, message do
         message = SubscriptionManager.list_active_subscriptions(subscription_params)
 
-        bot.api.send_message(chat_id: chat_id, text: message)
+        bot.api.send_message(chat_id:, text: message)
       end
 
-      action :alias, message do|params|
+      action :alias, message do |params|
+        Rails.logger.info "[Telegram Client] Creating alias #{params[:team]}"
         message = AliasManager.create_alias(params[:team], params[:alias])
-        bot.api.send_message(chat_id: chat_id, text: message)
+        bot.api.send_message(chat_id:, text: message)
       end
     end
   end
