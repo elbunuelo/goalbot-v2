@@ -39,7 +39,7 @@ def action(action_name, message, &block)
 end
 
 def set_locale(message)
-  I18n.locale = message.from.language_code || I18n.default_locale
+  I18n.locale = message.from.language_code[0..1] || I18n.default_locale
 end
 
 task telegram_client: :environment do
