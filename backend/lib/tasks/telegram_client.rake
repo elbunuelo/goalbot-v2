@@ -39,7 +39,7 @@ def action(action_name, message, &block)
 end
 
 def set_locale(message)
-  I18n.locale = message.from.language_code[0..1]
+  I18n.locale = message.from.language_code[0..1] if message.from.language_code
 rescue I18n::InvalidLocale
   I18n.locale = I18n.default_locale
 end
