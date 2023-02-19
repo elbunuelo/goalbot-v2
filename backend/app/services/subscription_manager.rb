@@ -11,6 +11,9 @@ class SubscriptionManager
       Rails.logger.info '[SubscriptionManager] Subscription creation failed.'
       I18n.t(:could_not_create_subscription)
     end
+    
+  rescue Errors::TeamNotFound => e
+    e.message
   rescue Errors::EventNotFound => e
     e.message
   end
