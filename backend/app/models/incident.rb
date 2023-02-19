@@ -49,7 +49,7 @@ class Incident < ApplicationRecord
 
     goal = event.incidents
                 .where('id < ?', id)
-                .where('(COALESCE(?, 0) + COALESCE(added_time, 0)) >= ?', time + added_time - Incidents::MAX_VAR_DIFFERENCE)
+                .where('time + COALESCE(added_time, 0)) >= ?', time + (added_time || 0) - Incidents::MAX_VAR_DIFFERENCE)
                 .where(player_name: player_name)
                 .where(incident_type: Incidents::Types::GOAL)
                 .first
