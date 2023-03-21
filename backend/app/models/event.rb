@@ -68,8 +68,7 @@ class Event < ApplicationRecord
   end
 
   def self.find_team_event_today(team)
-    where('home_team_id = ? OR away_team_id = ?', team.id, team.id)
-      .where(date: Date.today)
+    where('(home_team_id = ? OR away_team_id = ?) AND date = ?', team.id, team.id, Date.today)
       .first
   end
 end
