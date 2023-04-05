@@ -52,7 +52,7 @@ class Event < ApplicationRecord
   end
 
   def self.from_hash(event_data)
-    event =  Event.find_by(slug: event_data['slug'])
+    event =  Event.find_by(slug: event_data['slug'], date: Time.at(event_data['startTimestamp']).to_date)
 
     event || create!(
       {
@@ -69,6 +69,6 @@ class Event < ApplicationRecord
 
   def self.find_team_event_today(team)
     where('(home_team_id = ? OR away_team_id = ?) AND date = ?', team.id, team.id, Date.today)
-      .last
+      .first
   end
 end
