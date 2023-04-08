@@ -6,11 +6,11 @@ ENV APP_HOME /opt/app
 RUN mkdir -p $APP_HOME
 WORKDIR $APP_HOME
 
-RUN mkdir -p /opt/redd
-ADD ./redd /opt/redd
+RUN mkdir -p $APP_HOME/redd
+ADD ./redd $APP_HOME/redd
 
-ADD backend/Gemfile $APP_HOME/Gemfile
-ADD backend/Gemfile.lock $APP_HOME/Gemfile.lock
+ADD backend/Gemfile $APP_HOME/backend/Gemfile
+ADD backend/Gemfile.lock $APP_HOME/backend/Gemfile.lock
 
 RUN bundle install
 
