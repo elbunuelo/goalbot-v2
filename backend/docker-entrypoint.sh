@@ -1,7 +1,7 @@
 #! /bin/bash
 
 cd /opt/app/backend
-bundle install
+# bundle install
 
 rm ./tmp/pids/server.pid
 

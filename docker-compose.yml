@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   bot:
-    image: ruby
+    build: .
     entrypoint: /opt/app/backend/docker-entrypoint.sh ${SERVER_PORT}
     environment:
       - TZ=${TZ}
@@ -22,7 +22,7 @@ services:
       - redis
       - db
   video-finder:
-    image: ruby
+    build: .
     entrypoint: /opt/app/backend/video-finder-entrypoint.sh
     environment:
       - TZ=${TZ}
@@ -42,7 +42,7 @@ services:
     depends_on:
       - bot
   telegram-client:
-    image: ruby
+    build: .
     entrypoint: /opt/app/backend/telegram-client-entrypoint.sh
     environment:
       - TZ=${TZ}
@@ -62,7 +62,7 @@ services:
     depends_on:
       - bot
   resque:
-    image: ruby
+    build: .
     entrypoint: /opt/app/backend/resque-entrypoint.sh
     environment:
       - TZ=${TZ}
@@ -83,7 +83,7 @@ services:
       - redis
       - db
   resque-scheduler:
-    image: ruby
+    build: .
     entrypoint: /opt/app/backend/scheduler-entrypoint.sh
     environment:
       - TZ=${TZ}

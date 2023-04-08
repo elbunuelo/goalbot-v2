@@ -1,6 +1,6 @@
 #! /bin/bash
 
 cd /opt/app/backend
-bundle install
+# bundle install
 
 bin/rake telegram_client
