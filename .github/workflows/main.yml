@@ -24,4 +24,4 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Update
-        run: $GITHUB_WORKSPACE/auto-update.sh
+        run: /opt/goalbot-v2/auto-update.sh
