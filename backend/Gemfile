@@ -28,7 +28,7 @@ gem 'stimulus-rails'
 gem 'jbuilder'
 
 # gem 'redd', git: 'https://github.com/elbunuelo/redd.git'
-gem 'redd', path: '/opt/redd'
+gem 'redd', path: '../redd'
 
 gem 'httparty'
 
