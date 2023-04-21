@@ -10,7 +10,7 @@ HELP
 
 SERVICE_NAME = 'Telegram'
 
-TELEGRAM_TEAM_REGEX = '(?<team>.+)'
+TELEGRAM_TEAM_REGEX = '(?<team>(.+\n?)+)'
 TELEGRAM_ALIAS_REGEX = "#{TELEGRAM_TEAM_REGEX}::(?<alias>.+)"
 
 OPTIONAL_BOT_REGEX =
@@ -39,6 +39,7 @@ def action(action_name, message, &block)
 end
 
 def set_locale(message)
+  Rails.logger.info "[Telegram Client] Language code #{message.from.language_code}"
   I18n.locale = message.from.language_code[0..1] if message.from.language_code
 rescue I18n::InvalidLocale
   I18n.locale = I18n.default_locale
@@ -49,10 +50,10 @@ task telegram_client: :environment do
   Telegram::Bot::Client.run(configatron.telegram_token) do |bot|
     bot.listen do |message|
       next unless message.respond_to?(:text) && message.text
+      Rails.logger.info "[Telegram Client] Message received #{message}"
 
       set_locale(message)
-
-      Rails.logger.info "[Telegram Client] Message received #{message}"
+      Rails.logger.info "[Telegram Client] Locale set to #{I18n.locale}"
 
       chat_id = message.chat.id
       subscription_params = {
@@ -62,16 +63,28 @@ task telegram_client: :environment do
 
       action :follow, message do |params|
         Rails.logger.info "[Telegram Client] Following match with search #{params[:team]}"
-        message = SubscriptionManager.create_subscription(params[:team], subscription_params)
+        teams = params[:team].split(/[,;\n]/)
+        teams.each do |team|
+          next if team.empty?
 
-        bot.api.send_message(chat_id:, text: message)
+          Rails.logger.info "[Telegram Client] Searching for team #{team}"
+          message = SubscriptionManager.create_subscription(team.strip, subscription_params)
+
+          bot.api.send_message(chat_id:, text: message)
+        end
       end
 
       action :unfollow, message do |params|
-        Rails.logger.info "[Telegram Client] Unollowing match with search #{params[:team]}"
-        message = SubscriptionManager.delete_subscription(params[:team], subscription_params)
+        Rails.logger.info "[Telegram Client] Unfollowing match with search #{params[:team]}"
+        teams = params[:team].split(/[,;\n]/)
+        teams.each do |team|
+          next if team.empty?
 
-        bot.api.send_message(chat_id:, text: message)
+          Rails.logger.info "[Telegram Client] Searching for team #{team}"
+          message = SubscriptionManager.delete_subscription(team.strip, subscription_params)
+
+          bot.api.send_message(chat_id:, text: message)
+        end
       end
 
       action :hello, message do |_params|
