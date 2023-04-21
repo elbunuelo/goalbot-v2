@@ -1,2 +1,0 @@
-class SubscriptionsManager
-end

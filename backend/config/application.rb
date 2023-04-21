@@ -37,7 +37,7 @@ module RubyGoalbot
     config.sass.line_comments = false
     config.sass.cache = false
 
-    I18n.available_locales = %i[en es pt]
+    I18n.available_locales = %i[en es pt de]
     I18n.default_locale = :en
   end
 end

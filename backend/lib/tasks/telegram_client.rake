@@ -22,12 +22,12 @@ OPTIONAL_BOT_REGEX =
   end
 
 ACTIONS = {
-  follow: action_regex(%w[follow seguir], [TELEGRAM_TEAM_REGEX]),
-  unfollow: action_regex(%w[unfollow dejar parar], [TELEGRAM_TEAM_REGEX]),
+  follow: action_regex(%w[follow seguir folgen], [TELEGRAM_TEAM_REGEX]),
+  unfollow: action_regex(%w[unfollow dejar parar unfolgen], [TELEGRAM_TEAM_REGEX]),
   alias: action_regex(%w[alias], [TELEGRAM_ALIAS_REGEX]),
-  hello: action_regex(%w[hello hola oi]),
-  help: action_regex(%w[help ayuda ajuda]),
-  subs: action_regex(%w[subs suscripciones assinaturas])
+  hello: action_regex(%w[hello hola oi hallo]),
+  help: action_regex(%w[help ayuda ajuda hilfe]),
+  subs: action_regex(%w[subs suscripciones assinaturas abonnements])
 
 }
 
@@ -40,9 +40,12 @@ end
 
 def set_locale(message)
   Rails.logger.info "[Telegram Client] Language code #{message.from.language_code}"
-  I18n.locale = message.from.language_code[0..1] if message.from.language_code
-rescue I18n::InvalidLocale
-  I18n.locale = I18n.default_locale
+  new_locale = message.from.language_code[0..1] if message.from.language_code
+  if I18n.locale_available? new_locale
+    I18n.locale = new_locale
+  else
+    I18n.locale = I18n.default_locale
+  end
 end
 
 task telegram_client: :environment do
