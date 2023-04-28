@@ -36,7 +36,7 @@ gem 'amatch'
 
 gem 'resque'
 
-gem 'resque-scheduler'
+gem 'resque-scheduler', '~> 4.8.0'
 
 gem 'sass-rails'
 

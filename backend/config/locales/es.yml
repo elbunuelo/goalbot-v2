@@ -12,3 +12,4 @@ es:
   hello: "Hola"
   created_alias: "Alias creado"
   alias_already_exists: "El alias %{alias} ya existe para %{team}"
+  game_started: "Empezó"

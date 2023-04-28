@@ -26,14 +26,14 @@ class SubscriptionManager
       "#{I18n.t :could_not_destroy_subscription} #{event.title}"
     end
   rescue ActiveRecord::RecordNotFound
-    "#{I18n.t :subscription_not_found}"
+    I18n.t :subscription_not_found
   end
 
   def self.list_active_subscriptions(subscription_params)
     subscriptions = Subscription.active(subscription_params[:service], subscription_params[:conversation_id])
 
     if subscriptions.empty?
-      "#{I18n.t :no_active_subscriptions}"
+      I18n.t :no_active_subscriptions
     else
       subscriptions_list = subscriptions.map { |sub| sub.event.title }.join("\n")
       "#{I18n.t :active_subscriptions}\n#{subscriptions_list}"

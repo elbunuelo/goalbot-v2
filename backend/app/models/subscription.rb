@@ -2,6 +2,7 @@ class Subscription < ApplicationRecord
   belongs_to :event
 
   after_save :schedule_incident_fetch
+  after_save :schedule_game_start_messages
 
   scope :active, lambda { |service, conversation_id|
     joins(:event)
@@ -41,5 +42,16 @@ class Subscription < ApplicationRecord
     )
 
     Rails.logger.info("[Subscription] Created schedule #{schedule.inspect}")
+  end
+
+  def schedule_game_start_messages
+    if Time.now.to_i > event.start_timestamp
+      Rails.logger.info('[Subscription] Game already started, not scheduling game start messages.')
+      return
+    end
+    start_time = Time.at(event.start_timestamp)
+
+    Rails.logger.info("[Subscription] Scheduling game start messages at #{start_time}.")
+    Resque.delay_or_enqueue_at(start_time, SendGameStartedMessages, event.id)
   end
 end

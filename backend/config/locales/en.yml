@@ -43,3 +43,4 @@ en:
   hello: "Hi"
   created_alias: "Created alias"
   alias_already_exists: "Alias %{alias} already exists for %{team}"
+  game_started: "Started"

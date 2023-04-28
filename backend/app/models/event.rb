@@ -25,6 +25,10 @@ class Event < ApplicationRecord
     end
   end
 
+  def game_started_message
+    "⏱️  #{home_team.name} - #{away_team.name} #{I18n.t :game_started}"
+  end
+
   def title
     full_title = []
     full_title << emoji

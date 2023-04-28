@@ -12,3 +12,4 @@ de:
   hello: "Hallo"
   created_alias: "Alias erschuf"
   alias_already_exists: "Alias %{alias} für %{team} schon existiert"
+  game_started: "angefangt"
