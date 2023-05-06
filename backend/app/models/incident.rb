@@ -11,6 +11,8 @@ class Incident < ApplicationRecord
 
   scope :default, -> { order(:time) }
 
+  validate ss_id, uniqueness: true
+
   def self.find_pending_link_by_score(home_score, away_score)
     goals_pending_link.where(home_score: home_score, away_score: away_score).first
   end
@@ -63,7 +65,6 @@ class Incident < ApplicationRecord
   def maybe_schedule_send_subscription_messages
     return if notifications_sent || search_suspended
     return unless incident_type == Incidents::Types::GOAL
-    return unless video_url
 
     Resque.enqueue(SendSubscriptionMessages, id)
   end
