@@ -22,12 +22,14 @@ module Api
       url = Api::INCIDENTS_URL.sub '{{match_id}}', event.ss_id.to_s
       response = HTTParty.get(url)
 
-      response.parsed_response['incidents']&.map do |i|
+      incidents = response.parsed_response['incidents']&.map do |i|
         Incident.from_hash(i.merge({ event: event }))
       rescue ActiveRecord::RecordInvalid
         Rails.logger.info("Incident with id #{i['id']} already exists, ignoring")
         nil
-      end.&compact
+      end
+
+      incidents.compact
     end
 
     def self._search(search, &block)

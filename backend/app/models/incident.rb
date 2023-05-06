@@ -11,7 +11,7 @@ class Incident < ApplicationRecord
 
   scope :default, -> { order(:time) }
 
-  validate :ss_id, uniqueness: true
+  validates :ss_id, uniqueness: true
 
   def self.find_pending_link_by_score(home_score, away_score)
     goals_pending_link.where(home_score: home_score, away_score: away_score).first
