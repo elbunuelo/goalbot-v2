@@ -12,7 +12,7 @@ class Incident < ApplicationRecord
 
   scope :default, -> { order(:time) }
 
-  validates :ss_id, uniqueness: true
+  validates :ss_id, uniqueness: true, allow_nil: true
 
   def self.find_pending_link_by_score(home_score, away_score)
     goals_pending_link.where(home_score: home_score, away_score: away_score).first
@@ -76,9 +76,7 @@ class Incident < ApplicationRecord
 
     event = incident_data.delete(:event)
     ss_id = incident_data['id']
-    Rails.logger.warn(incident_data) unless ss_id
 
-    incident = Incident.find_by(ss_id: ss_id)
 
     incident_hash = {
       ss_id: ss_id,
@@ -98,10 +96,13 @@ class Incident < ApplicationRecord
       player_name: player_name
     }
 
-    if incident
-      incident.update(incident_hash)
+    if ss_id
+      incident = Incident.find_by(ss_id: ss_id)
+      incident&.update(incident_hash)
+      incident ||= event.incidents.create(incident_hash)
     else
-      incident = event.incidents.create(incident_hash)
+      incident = event.incidents.find_or_initialize_by(incident_hash)
+      incident.save
     end
 
     incident
