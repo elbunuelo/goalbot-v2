@@ -27,7 +27,8 @@ class Incident < ApplicationRecord
     message += "#{player_name} " if player_name
     message += time.to_s
     message += "+#{added_time}" if added_time
-    message += "' | #{video_url}" if video_url
+    message += "'"
+    message += " | #{video_url}" if video_url
 
     message
   end
