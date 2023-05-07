@@ -29,7 +29,7 @@ module Api
         nil
       end
 
-      incidents.compact
+      incidents&.compact
     end
 
     def self._search(search, &block)

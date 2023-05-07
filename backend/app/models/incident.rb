@@ -1,5 +1,6 @@
 class Incident < ApplicationRecord
   belongs_to :event
+  has_many :incident_messages
 
   before_create :maybe_set_searching_since
   after_create :maybe_schedule_search_cancellation
@@ -26,7 +27,9 @@ class Incident < ApplicationRecord
     message += "#{player_name} " if player_name
     message += time.to_s
     message += "+#{added_time}" if added_time
-    message + "' | #{video_url}"
+    message += "' | #{video_url}" if video_url
+
+    message
   end
 
   private
@@ -63,7 +66,6 @@ class Incident < ApplicationRecord
   end
 
   def maybe_schedule_send_subscription_messages
-    return if notifications_sent || search_suspended
     return unless incident_type == Incidents::Types::GOAL
 
     Resque.enqueue(SendSubscriptionMessages, id)
@@ -73,28 +75,35 @@ class Incident < ApplicationRecord
     player_name = incident_data.fetch('player_name', nil) || incident_data.fetch('player', {}).fetch('name', nil)
 
     event = incident_data.delete(:event)
-    new_incident = event.incidents.find_or_initialize_by(
-      {
-        reason: incident_data.fetch('reason', nil),
-        incident_class: incident_data.fetch('incidentClass', nil),
-        incident_type: incident_data.fetch('incidentType', nil),
-        time: incident_data.fetch('time', nil),
-        is_home: incident_data.fetch('isHome', nil),
-        text: incident_data.fetch('text', nil),
-        home_score: incident_data.fetch('homeScore', nil),
-        away_score: incident_data.fetch('awayScore', nil),
-        added_time: incident_data.fetch('addedTime', nil),
-        player_in: incident_data.fetch('playerIn', {}).fetch('name', nil),
-        player_out: incident_data.fetch('playerOut', {}).fetch('name', nil),
-        length: incident_data.fetch('length', nil),
-        description: incident_data.fetch('description', nil)
-      }
-    )
+    ss_id = incident_data['id']
+    Rails.logger.warn(incident_data) unless ss_id
 
-    new_incident.ss_id ||= incident_data['id']
-    new_incident.player_name ||= player_name
-    new_incident.save
+    incident = Incident.find_by(ss_id: ss_id)
 
-    new_incident
+    incident_hash = {
+      ss_id: ss_id,
+      reason: incident_data.fetch('reason', nil),
+      incident_class: incident_data.fetch('incidentClass', nil),
+      incident_type: incident_data.fetch('incidentType', nil),
+      time: incident_data.fetch('time', nil),
+      is_home: incident_data.fetch('isHome', nil),
+      text: incident_data.fetch('text', nil),
+      home_score: incident_data.fetch('homeScore', nil),
+      away_score: incident_data.fetch('awayScore', nil),
+      added_time: incident_data.fetch('addedTime', nil),
+      player_in: incident_data.fetch('playerIn', {}).fetch('name', nil),
+      player_out: incident_data.fetch('playerOut', {}).fetch('name', nil),
+      length: incident_data.fetch('length', nil),
+      description: incident_data.fetch('description', nil),
+      player_name: player_name
+    }
+
+    if incident
+      incident.update(incident_hash)
+    else
+      incident = event.incidents.create(incident_hash)
+    end
+
+    incident
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_10_19_004828) do
+ActiveRecord::Schema[7.0].define(version: 2023_05_06_161831) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -28,6 +28,16 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_19_004828) do
     t.boolean "finished"
     t.index ["away_team_id"], name: "index_events_on_away_team_id"
     t.index ["home_team_id"], name: "index_events_on_home_team_id"
+  end
+
+  create_table "incident_messages", force: :cascade do |t|
+    t.bigint "incident_id", null: false
+    t.bigint "subscription_id", null: false
+    t.integer "message_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["incident_id"], name: "index_incident_messages_on_incident_id"
+    t.index ["subscription_id"], name: "index_incident_messages_on_subscription_id"
   end
 
   create_table "incidents", force: :cascade do |t|
@@ -99,6 +109,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_19_004828) do
 
   add_foreign_key "events", "teams", column: "away_team_id"
   add_foreign_key "events", "teams", column: "home_team_id"
+  add_foreign_key "incident_messages", "incidents"
+  add_foreign_key "incident_messages", "subscriptions"
   add_foreign_key "incidents", "events"
   add_foreign_key "search_caches", "teams"
   add_foreign_key "subscriptions", "events"

@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  incident: one
+  subscription: one
+  message_id: 1
+
+two:
+  incident: two
+  subscription: two
+  message_id: 1
