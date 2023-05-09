@@ -36,7 +36,6 @@ class EventManager
         Resque.logger.info "[Incident Fetch] Game ended, removing schedule #{event.schedule_name}"
         Resque.remove_schedule(event.schedule_name)
         event.update(finished: true)
-        break
       end
     end
   end
