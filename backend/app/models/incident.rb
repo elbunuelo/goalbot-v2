@@ -78,9 +78,7 @@ class Incident < ApplicationRecord
     event = incident_data.delete(:event)
     ss_id = incident_data['id']
 
-
     incident_hash = {
-      ss_id: ss_id,
       reason: incident_data.fetch('reason', nil),
       incident_class: incident_data.fetch('incidentClass', nil),
       incident_type: incident_data.fetch('incidentType', nil),
@@ -97,12 +95,12 @@ class Incident < ApplicationRecord
       player_name: player_name
     }
 
-    if ss_id
-      incident = Incident.find_by(ss_id: ss_id)
-      incident&.update(incident_hash)
-      incident ||= event.incidents.create(incident_hash)
+    incident = Incident.find_by(ss_id: ss_id) if ss_id
+    if incident
+      incident.update(incident_hash)
     else
       incident = event.incidents.find_or_initialize_by(incident_hash)
+      incident.ss_id = ss_id
       incident.save
     end
 
