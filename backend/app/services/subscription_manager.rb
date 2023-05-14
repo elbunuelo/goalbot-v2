@@ -17,6 +17,23 @@ class SubscriptionManager
     e.message
   end
 
+  def self.create_team_subscription(team_search, subscription_params)
+    team = Team.search(team_search)
+
+    subscription = team.team_subscriptions.find_or_initialize_by(subscription_params)
+
+    if subscription.save
+      Rails.logger.info '[SubscriptionManager] Team Subscription created'
+      self.create_subscription(team.name, subscription_params)
+      "#{I18n.t(:following_team)} #{team.name}"
+    else
+      Rails.logger.info '[SubscriptionManager] Team Subscription creation failed.'
+      I18n.t(:could_not_create_subscription)
+    end
+  rescue Errors::TeamNotFound => e
+    e.message
+  end
+
   def self.delete_subscription(team_search, subscription_params)
     event = EventManager.find_matching(team_search)
     subscription = event.subscriptions.find_by!(subscription_params)

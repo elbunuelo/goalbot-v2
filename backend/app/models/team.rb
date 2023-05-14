@@ -2,6 +2,7 @@ class Team < ApplicationRecord
   has_many :home_events, class_name: 'Event', foreign_key: :home_team_id
   has_many :away_events, class_name: 'Event', foreign_key: :away_team_id
   has_many :team_aliases
+  has_many :team_subscriptions
 
   scope :playing_today, lambda {
                           joins('LEFT JOIN events ON (events.home_team_id = teams.id OR events.away_team_id = teams.id)').where('events.date = ?', Date.today)

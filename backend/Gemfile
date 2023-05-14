@@ -32,8 +32,6 @@ gem 'redd', path: '../redd'
 
 gem 'httparty'
 
-gem 'amatch'
-
 gem 'resque'
 
 gem 'resque-scheduler', '~> 4.8.0'

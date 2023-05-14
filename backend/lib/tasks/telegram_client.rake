@@ -1,7 +1,8 @@
 require 'telegram/bot'
 HELP_TEXT = <<~HELP
   /hola - Saluda al bot.
-  /seguir <equipo> - Busca y monitorea un partido. e.j. /seguir Liverpool
+  /seguir <equipo> - Busca y monitorea un partido. Admite varios equipos separándolos con coma (,) punto y coma (;) o fin de línea.
+  /seguir_equipo <equipo> - Busca un equipo y sigue todos sus partidos. Admite varios equipos separándolos con coma (,) punto y coma (;) o fin de línea.
   /dejar <equipo> - Deja de monitorear un partido.
   /subs - Lista las suscripciones activas.
   /alias <equipo>::<alias> - Crea un alias para un equipo.
@@ -23,10 +24,11 @@ OPTIONAL_BOT_REGEX =
 
 ACTIONS = {
   follow: action_regex(%w[follow seguir folgen], [TELEGRAM_TEAM_REGEX]),
+  follow_team: action_regex(%w[follow_team seguir_equipo mannschaft_folgen], [TELEGRAM_TEAM_REGEX]),
   unfollow: action_regex(%w[unfollow dejar parar unfolgen], [TELEGRAM_TEAM_REGEX]),
   alias: action_regex(%w[alias], [TELEGRAM_ALIAS_REGEX]),
   hello: action_regex(%w[hello hola oi hallo]),
-  help: action_regex(%w[help ayuda ajuda hilfe]),
+  help: action_regex(%w[help ayuda ajuda hilfe start]),
   subs: action_regex(%w[subs suscripciones assinaturas abonnements])
 
 }
@@ -72,6 +74,19 @@ task telegram_client: :environment do
 
           Rails.logger.info "[Telegram Client] Searching for team #{team}"
           message = SubscriptionManager.create_subscription(team.strip, subscription_params)
+
+          bot.api.send_message(chat_id:, text: message)
+        end
+      end
+
+      action :follow_team, message do |params|
+        Rails.logger.info "[Telegram Client] Following team with search #{params[:team]}"
+        teams = params[:team].split(/[,;\n]/)
+        teams.each do |team|
+          next if team.empty?
+
+          Rails.logger.info "[Telegram Client] Searching for team #{team}"
+          message = SubscriptionManager.create_team_subscription(team.strip, subscription_params)
 
           bot.api.send_message(chat_id:, text: message)
         end

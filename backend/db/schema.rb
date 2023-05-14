@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_05_06_161831) do
+ActiveRecord::Schema[7.0].define(version: 2023_05_13_183816) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -98,6 +98,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_06_161831) do
     t.index ["team_id"], name: "index_team_aliases_on_team_id"
   end
 
+  create_table "team_subscriptions", force: :cascade do |t|
+    t.string "conversation_id"
+    t.string "service"
+    t.bigint "team_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["team_id"], name: "index_team_subscriptions_on_team_id"
+  end
+
   create_table "teams", force: :cascade do |t|
     t.string "name"
     t.string "slug"
@@ -115,4 +124,5 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_06_161831) do
   add_foreign_key "search_caches", "teams"
   add_foreign_key "subscriptions", "events"
   add_foreign_key "team_aliases", "teams"
+  add_foreign_key "team_subscriptions", "teams"
 end
