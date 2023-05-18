@@ -26,13 +26,14 @@ class Event < ApplicationRecord
   end
 
   def game_started_message
-    "⏱️  #{home_team.name} - #{away_team.name} #{I18n.t :game_started}"
+    "⏱️  #{tournament} | #{home_team.name} - #{away_team.name} #{I18n.t :game_started}"
   end
 
   def title
     full_title = []
     full_title << emoji
     full_title << "[#{start_time}]" unless playing? || finished
+    full_title << "#{tournament} |" if tournament
     full_title << home_team.name
 
     full_title << home_score if playing? || finished
@@ -66,7 +67,8 @@ class Event < ApplicationRecord
         slug: event_data['slug'],
         home_team: Team.from_hash(event_data['homeTeam']),
         away_team: Team.from_hash(event_data['awayTeam']),
-        date: Time.at(event_data['startTimestamp']).to_date
+        date: Time.at(event_data['startTimestamp']).to_date,
+        tournament: event_data.fetch('tournament',{}).fetch('name')
       }
     )
   end
