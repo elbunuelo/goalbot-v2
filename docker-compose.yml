@@ -18,9 +18,13 @@ services:
     volumes:
       - ./:/opt/app
     restart: unless-stopped
+    env_file:
+      - var.env
     depends_on:
       - redis
       - db
+    labels:
+      - com.centurylinklabs.watchtower.enable: false
   video-finder:
     build: .
     entrypoint: /opt/app/backend/video-finder-entrypoint.sh
@@ -39,8 +43,12 @@ services:
     volumes:
       - ./:/opt/app
     restart: unless-stopped
+    env_file:
+      - var.env
     depends_on:
       - bot
+    labels:
+      - com.centurylinklabs.watchtower.enable: false
   telegram-client:
     build: .
     entrypoint: /opt/app/backend/telegram-client-entrypoint.sh
@@ -59,8 +67,12 @@ services:
     volumes:
       - ./:/opt/app
     restart: unless-stopped
+    env_file:
+      - var.env
     depends_on:
       - bot
+    labels:
+      - com.centurylinklabs.watchtower.enable: false
   resque:
     build: .
     entrypoint: /opt/app/backend/resque-entrypoint.sh
@@ -79,6 +91,8 @@ services:
     volumes:
       - ./:/opt/app
     restart: unless-stopped
+    env_file:
+      - var.env
     depends_on:
       - redis
       - db
@@ -100,9 +114,13 @@ services:
     volumes:
       - ./:/opt/app
     restart: unless-stopped
+    env_file:
+      - var.env
     depends_on:
       - redis
       - db
+    labels:
+      - com.centurylinklabs.watchtower.enable: false
   redis:
     image: redis
     command: redis-server
@@ -113,6 +131,8 @@ services:
     environment:
       - TZ=${TZ}
       - REDIS_REPLICATION_MODE=master
+    env_file:
+      - var.env
   db:
     image: postgres
     environment:
@@ -124,3 +144,5 @@ services:
     volumes:
       - ./postgres_data:/var/lib/postgresql
     restart: unless-stopped
+    env_file:
+      - var.env

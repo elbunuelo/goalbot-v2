@@ -70,11 +70,11 @@ module Api
       end
 
       Rails.logger.info "Next event: #{next_event['slug']} - #{next_event['startTimestamp']}" if next_event
-      if previous_event&['status']['type'] == 'inprogress'
+      if previous_event.fetch('status',{}).fetch('type') == 'inprogress'
         Event.from_hash(previous_event)
-      elsif Time.at(previous_event&['startTimestamp']).to_date == Date.today
+      elsif Time.at(previous_event.fetch('startTimestamp')).to_date == Date.today
         Event.from_hash(previous_event)
-      elsif next_event && Time.at(next_event['startTimestamp']).to_date == Date.today
+      elsif next_event && Time.at(next_event.fetch('startTimestamp')).to_date == Date.today
         Event.from_hash(next_event)
       end
     end
