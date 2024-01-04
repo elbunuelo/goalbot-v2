@@ -139,10 +139,9 @@ services:
       - TZ=${TZ}
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=goalbot_123
-      - PGDATA=/var/lib/postgresql/data/pgdata
       - POSTGRES_DB=goalbot
     volumes:
-      - ./postgres_data:/var/lib/postgresql
+      - ./postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
     env_file:
       - var.env
