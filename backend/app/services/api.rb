@@ -57,13 +57,21 @@ module Api
       team
     end
 
-    def self.todays_event(team)
+    def self.near_events(team)
       url = Api::NEAR_EVENTS_URL.sub '{{team_id}}', team.ss_id
       Rails.logger.info "Getting near events from #{url}"
       response = HTTParty.get(url)
       events = response.parsed_response
       previous_event = events['previousEvent']
       next_event = events['nextEvent']
+
+      { previous: previous_event, next: next_event }
+    end
+
+    def self.todays_event(team)
+      events = near_events team
+      previous_event = events[:previous]
+      next_event = events[:previous]
 
       if previous_event
         Rails.logger.info "Previous event: #{previous_event['slug']} - #{previous_event['startTimestamp']}"
@@ -77,6 +85,15 @@ module Api
       elsif next_event && Time.at(next_event.fetch('startTimestamp')).to_date == Date.today
         Event.from_hash(next_event)
       end
+    end
+
+    def self.tomorrows_event(team)
+      next_event = near_events(team)[:next]
+
+      Rails.logger.info "Next event: #{next_event['slug']} - #{next_event}['startTimestamp']}" if next_event
+      return unless next_event && Time.at(next_event.fetch('startTimestamp')).to_date == Date.tomorrow
+
+      Event.from_hash(next_event)
     end
   end
 end

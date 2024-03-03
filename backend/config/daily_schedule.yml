@@ -1,2 +1,4 @@
 DailySubscribe:
   cron: "0 3 * * *"
+SendNextDayMessages:
+  cron: "0 19 * * *"

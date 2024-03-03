@@ -68,7 +68,7 @@ class Event < ApplicationRecord
         home_team: Team.from_hash(event_data['homeTeam']),
         away_team: Team.from_hash(event_data['awayTeam']),
         date: Time.at(event_data['startTimestamp']).to_date,
-        tournament: event_data.fetch('tournament',{}).fetch('name')
+        tournament: event_data.fetch('tournament', {}).fetch('name')
       }
     )
   end
