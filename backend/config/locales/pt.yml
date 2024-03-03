@@ -13,3 +13,4 @@ pt:
   created_alias: "Alias criado"
   alias_already_exists: "O alias %{alias} já existe para %{team}"
   game_started: "Começou"
+  tomorrows_matches: "Jogos de amanhã"

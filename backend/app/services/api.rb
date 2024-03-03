@@ -90,8 +90,9 @@ module Api
     def self.tomorrows_event(team)
       next_event = near_events(team)[:next]
 
-      Rails.logger.info "Next event: #{next_event['slug']} - #{next_event}['startTimestamp']}" if next_event
-      return unless next_event && Time.at(next_event.fetch('startTimestamp')).to_date == Date.tomorrow
+      Rails.logger.info "Next event: #{next_event['slug']} - #{next_event['startTimestamp']}" if next_event
+
+      return nil unless next_event && Time.at(next_event.fetch('startTimestamp')).to_date == Date.tomorrow
 
       Event.from_hash(next_event)
     end

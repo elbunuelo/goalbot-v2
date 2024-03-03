@@ -1,14 +1,18 @@
+require 'telegram/bot'
+
 class SendNextDayMessages
   @queue = :incidents
 
   def self.perform
-    TeamSubscription.conversations.each do |conversation_id|
+    TeamSubscription.conversations.each do |conversation_info|
+      conversation_id = conversation_info[0]
+      service = conversation_info[1]
       messages = []
-      TeamSubscription.joins(:team).for_conversation(conversation_id).each do |subscription|
+      TeamSubscription.joins(:team).for_conversation(conversation_id, service).each do |subscription|
         event = Api::Client.tomorrows_event subscription.team
         next unless event
 
-        messages << Event.from_hash(event).title
+        messages << event.title
       end
 
       next unless messages.present?

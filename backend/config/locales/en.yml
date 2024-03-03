@@ -45,4 +45,4 @@ en:
   alias_already_exists: "Alias %{alias} already exists for %{team}"
   game_started: "Started"
   following_team: "Following team"
-  tomorrows_events: "Tomorrow's matches"
+  tomorrows_matches: "Tomorrow's matches"
