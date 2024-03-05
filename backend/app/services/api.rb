@@ -71,7 +71,7 @@ module Api
     def self.todays_event(team)
       events = near_events team
       previous_event = events[:previous]
-      next_event = events[:previous]
+      next_event = events[:next]
 
       if previous_event
         Rails.logger.info "Previous event: #{previous_event['slug']} - #{previous_event['startTimestamp']}"
