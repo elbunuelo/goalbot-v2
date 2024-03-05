@@ -14,3 +14,4 @@ pt:
   alias_already_exists: "O alias %{alias} já existe para %{team}"
   game_started: "Começou"
   tomorrows_matches: "Jogos de amanhã"
+  following_match: "Seguindo a equipe %{team}"

@@ -24,8 +24,8 @@ class SubscriptionManager
 
     if subscription.save
       Rails.logger.info '[SubscriptionManager] Team Subscription created'
-      self.create_subscription(team.name, subscription_params)
-      "#{I18n.t(:following_team)} #{team.name}"
+      create_subscription(team.name, subscription_params)
+      I18n.t(:following_team, team: team.name)
     else
       Rails.logger.info '[SubscriptionManager] Team Subscription creation failed.'
       I18n.t(:could_not_create_subscription)
