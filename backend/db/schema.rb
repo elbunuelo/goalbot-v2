@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_05_18_133954) do
+ActiveRecord::Schema[7.0].define(version: 2024_06_13_232634) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -27,8 +27,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_18_133954) do
     t.integer "last_incident_seen"
     t.boolean "finished"
     t.string "tournament"
+    t.bigint "tournament_id"
     t.index ["away_team_id"], name: "index_events_on_away_team_id"
     t.index ["home_team_id"], name: "index_events_on_home_team_id"
+    t.index ["tournament_id"], name: "index_events_on_tournament_id"
   end
 
   create_table "incident_messages", force: :cascade do |t|
@@ -82,6 +84,16 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_18_133954) do
     t.index ["team_id"], name: "index_search_caches_on_team_id"
   end
 
+  create_table "seasons", force: :cascade do |t|
+    t.bigint "tournament_id", null: false
+    t.string "year"
+    t.string "ss_id"
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["tournament_id"], name: "index_seasons_on_tournament_id"
+  end
+
   create_table "subscriptions", force: :cascade do |t|
     t.bigint "event_id", null: false
     t.string "service"
@@ -117,13 +129,42 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_18_133954) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "tournament_aliases", force: :cascade do |t|
+    t.string "alias"
+    t.bigint "tournament_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["tournament_id"], name: "index_tournament_aliases_on_tournament_id"
+  end
+
+  create_table "tournament_subscriptions", force: :cascade do |t|
+    t.string "service"
+    t.string "conversation_id"
+    t.bigint "tournament_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["tournament_id"], name: "index_tournament_subscriptions_on_tournament_id"
+  end
+
+  create_table "tournaments", force: :cascade do |t|
+    t.string "name"
+    t.string "slug"
+    t.string "ss_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   add_foreign_key "events", "teams", column: "away_team_id"
   add_foreign_key "events", "teams", column: "home_team_id"
+  add_foreign_key "events", "tournaments"
   add_foreign_key "incident_messages", "incidents"
   add_foreign_key "incident_messages", "subscriptions"
   add_foreign_key "incidents", "events"
   add_foreign_key "search_caches", "teams"
+  add_foreign_key "seasons", "tournaments"
   add_foreign_key "subscriptions", "events"
   add_foreign_key "team_aliases", "teams"
   add_foreign_key "team_subscriptions", "teams"
+  add_foreign_key "tournament_aliases", "tournaments"
+  add_foreign_key "tournament_subscriptions", "tournaments"
 end

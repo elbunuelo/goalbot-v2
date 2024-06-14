@@ -46,3 +46,5 @@ en:
   game_started: "Started"
   following_team: "Following team %{team}"
   tomorrows_matches: "Tomorrow's matches"
+  todays_matches: "Today's matches for %{tournament}"
+  following_tournament": "Following tournament %{tournament}"

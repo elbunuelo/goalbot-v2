@@ -34,6 +34,22 @@ class SubscriptionManager
     e.message
   end
 
+  def self.create_tournament_subscription(tournament_search, subscription_params)
+    tournament = Tournament.search(tournament_search)
+
+    subscription = tournament.tournament_subscriptions.find_or_initialize_by(subscription_params)
+
+    if subscription.save
+      Rails.logger.info '[SubscriptionManager] Tournament Subscription created'
+      I18n.t(:following_tournament, tournament: tournament.name)
+    else
+      Rails.logger.info '[SubscriptionManager] Tournament Subscription creation failed.'
+      I18n.t(:could_not_create_subscription)
+    end
+  rescue Errors::TournamentNotFound => e
+    e.message
+  end
+
   def self.delete_subscription(team_search, subscription_params)
     event = EventManager.find_matching(team_search)
     subscription = event.subscriptions.find_by!(subscription_params)

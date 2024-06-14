@@ -3,16 +3,20 @@ HELP_TEXT = <<~HELP
   /hola - Saluda al bot.
   /seguir <equipo> - Busca y monitorea un partido. Admite varios equipos separándolos con coma (,) punto y coma (;) o fin de línea.
   /seguir_equipo <equipo> - Busca un equipo y sigue todos sus partidos. Admite varios equipos separándolos con coma (,) punto y coma (;) o fin de línea.
+  /seguir_torneo <torneo> - Busca un torneo y envia los partidos del dia.
   /dejar <equipo> - Deja de monitorear un partido.
   /subs - Lista las suscripciones activas.
   /alias <equipo>::<alias> - Crea un alias para un equipo.
+  /alias_torneo <torneo>::<alias> - Crea un alias para un torneo.
   /help - Mostrar ayuda.
 HELP
 
 SERVICE_NAME = 'Telegram'
 
 TELEGRAM_TEAM_REGEX = '(?<team>(.+\n?)+)'
+TELEGRAM_TOURNAMENT_REGEX = '(?<tournament>(.+\n?)+)'
 TELEGRAM_ALIAS_REGEX = "#{TELEGRAM_TEAM_REGEX}::(?<alias>.+)"
+TELEGRAM_TOURNAMENT_ALIAS_REGEX = "#{TELEGRAM_TOURNAMENT_REGEX}::(?<alias>.+)"
 
 OPTIONAL_BOT_REGEX =
   def action_regex(keywords, action_params = [])
@@ -25,8 +29,10 @@ OPTIONAL_BOT_REGEX =
 ACTIONS = {
   follow: action_regex(%w[follow seguir folgen], [TELEGRAM_TEAM_REGEX]),
   follow_team: action_regex(%w[follow_team seguir_equipo mannschaft_folgen], [TELEGRAM_TEAM_REGEX]),
+  follow_tournament: action_regex(%w[follow_tournament seguir_torneo meisterschaft_folgen], [TELEGRAM_TOURNAMENT_REGEX]),
   unfollow: action_regex(%w[unfollow dejar parar unfolgen], [TELEGRAM_TEAM_REGEX]),
   alias: action_regex(%w[alias], [TELEGRAM_ALIAS_REGEX]),
+  alias_tournament: action_regex(%w[alias_torneo alias_tournament alias_meisterschaft], [TELEGRAM_TOURNAMENT_ALIAS_REGEX]),
   hello: action_regex(%w[hello hola oi hallo]),
   help: action_regex(%w[help ayuda ajuda hilfe start]),
   subs: action_regex(%w[subs suscripciones assinaturas abonnements])
@@ -92,6 +98,19 @@ task telegram_client: :environment do
         end
       end
 
+      action :follow_tournament, message do |params|
+        Rails.logger.info "[Telegram Client] Following tournament with search #{params[:tournament]}"
+        tournaments = params[:tournament].split(/[,;\n]/)
+        tournaments.each do |tournament|
+          next if tournament.empty?
+
+          Rails.logger.info "[Telegram Client] Searching for tournament #{tournament}"
+          message = SubscriptionManager.create_tournament_subscription(tournament.strip, subscription_params)
+
+          bot.api.send_message(chat_id:, text: message)
+        end
+      end
+
       action :unfollow, message do |params|
         Rails.logger.info "[Telegram Client] Unfollowing match with search #{params[:team]}"
         teams = params[:team].split(/[,;\n]/)
@@ -122,6 +141,12 @@ task telegram_client: :environment do
       action :alias, message do |params|
         Rails.logger.info "[Telegram Client] Creating alias #{params[:team]} #{params[:alias]}"
         message = AliasManager.create_alias(params[:team], params[:alias])
+        bot.api.send_message(chat_id:, text: message)
+      end
+
+      action :alias_tournament, message do |params|
+        Rails.logger.info "[Telegram Client] Creating alias #{params[:tournament]} #{params[:alias]}"
+        message = AliasManager.create_tournament_alias(params[:tournament], params[:alias])
         bot.api.send_message(chat_id:, text: message)
       end
     end

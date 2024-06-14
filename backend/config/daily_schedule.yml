@@ -2,3 +2,5 @@ DailySubscribe:
   cron: "0 3 * * *"
 SendNextDayMessages:
   cron: "0 19 * * *"
+SendTournamentTodayMessages:
+  cron: "0 7 * * *"

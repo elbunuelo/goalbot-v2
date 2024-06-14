@@ -4,6 +4,8 @@ module Api
   INCIDENTS_URL = "#{BASE_URL}/api/v1/event/{{match_id}}/incidents".freeze
   SEARCH_URL = "#{BASE_URL}/api/v1/search/{{search}}/0".freeze
   NEAR_EVENTS_URL = "#{BASE_URL}/api/v1/team/{{team_id}}/near-events".freeze
+  SEASONS_URL = "#{BASE_URL}/api/v1/unique-tournament/{{tournament_id}}/seasons".freeze
+  TOURNAMENT_EVENTS_URL = "#{BASE_URL}/api/v1/unique-tournament/{{tournament_id}}/season/{{season_id}}/events/next/0".freeze
 
   FOOTBALL = 'Football'.freeze
   UNIQUE_TOURNAMENT = 'uniqueTournament'.freeze
@@ -32,6 +34,31 @@ module Api
       incidents&.compact
     end
 
+    def self.fetch_seasons(tournament)
+      url = Api::SEASONS_URL.sub '{{tournament_id}}', tournament.ss_id.to_s
+      response = HTTParty.get(url)
+
+      seasons = response.parsed_response['seasons']&.map do |s|
+        Season.from_hash(s.merge({ tournament: tournament }))
+      end
+
+      seasons&.compact
+    end
+
+    def self.fetch_tournament_todays_events(tournament)
+      url = Api::TOURNAMENT_EVENTS_URL.sub('{{tournament_id}}', tournament.ss_id.to_s)
+                                      .sub('{{season_id}}', tournament.seasons.current.ss_id.to_s)
+      response = HTTParty.get(url)
+
+      events = response.parsed_response['events']&.map do |e|
+        next unless Time.at(e.fetch('startTimestamp')).to_date == Date.tomorrow
+
+        Event.from_hash(e)
+      end
+
+      events&.compact
+    end
+
     def self._search(search, &block)
       sanitized_search = search.gsub('/', ' ')
       url = Api::SEARCH_URL.sub '{{search}}', ERB::Util.url_encode(sanitized_search)
@@ -56,6 +83,23 @@ module Api
 
       team
     end
+
+    def self.search_tournament(tournament_search)
+      result = _search(tournament_search) do |candidate|
+        next unless candidate['type'] == Api::UNIQUE_TOURNAMENT
+        next unless candidate['entity']['category']['sport']['name'] == Api::FOOTBALL
+
+        true
+      end
+
+      if result
+        tournament = Tournament.from_hash(result['entity']) if result
+        fetch_seasons(tournament)
+      end
+
+      tournament
+    end
+
 
     def self.near_events(team)
       url = Api::NEAR_EVENTS_URL.sub '{{team_id}}', team.ss_id

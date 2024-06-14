@@ -77,4 +77,8 @@ class Event < ApplicationRecord
     where('(home_team_id = ? OR away_team_id = ?) AND date = ?', team.id, team.id, Date.today)
       .first
   end
+
+  def self.find_tournament_events_today(tournament)
+    where('tournament_id = ? and date = ?', tournament.id, Date.today)
+  end
 end

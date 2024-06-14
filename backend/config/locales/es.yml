@@ -15,3 +15,5 @@ es:
   game_started: "Empezó"
   tomorrows_matches: "Partidos mañana"
   following_team: "Siguiendo equipo %{team}"
+  todays_matches: "Partidos hoy de %{tournament}"
+  following_tournament: "Siguiendo torneo %{tournament}"
