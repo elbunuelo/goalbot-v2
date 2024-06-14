@@ -17,3 +17,4 @@ es:
   following_team: "Siguiendo equipo %{team}"
   todays_matches: "Partidos hoy de %{tournament}"
   following_tournament: "Siguiendo torneo %{tournament}"
+  tournament_not_found: "No encontré el torneo"

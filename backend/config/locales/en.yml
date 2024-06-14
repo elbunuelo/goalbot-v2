@@ -48,3 +48,4 @@ en:
   tomorrows_matches: "Tomorrow's matches"
   todays_matches: "Today's matches for %{tournament}"
   following_tournament: "Following tournament %{tournament}"
+  tournament_not_found: "Tournament not found"

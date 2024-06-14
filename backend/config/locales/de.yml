@@ -17,3 +17,4 @@ de:
   following_team: "Manschaft %{team} wird erfolgt"
   following_tournament: "Meisterschaft %{tournament} wird gefolgt"
   todays_matches: "Spiele für %{tournament} heute"
+  tournament_not_found: "Meisterschaft wird nicht gefunden"
