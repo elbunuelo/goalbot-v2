@@ -51,7 +51,7 @@ module Api
       response = HTTParty.get(url)
 
       events = response.parsed_response['events']&.map do |e|
-        next unless Time.at(e.fetch('startTimestamp')).to_date == Date.tomorrow
+        next unless Time.at(e.fetch('startTimestamp')).to_date == Date.today
 
         Event.from_hash(e)
       end
