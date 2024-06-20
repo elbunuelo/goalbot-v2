@@ -16,6 +16,7 @@ class SendTournamentTodayMessages
         events.each do |event|
           messages << event.title
         end
+        messages << ''
       end
 
       next unless messages.present?
