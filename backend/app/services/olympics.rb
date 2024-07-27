@@ -40,7 +40,7 @@ class Olympics
   end
 
   def self.medals_message(medals)
-    header = "#{'Country'.ljust(15)} Gold Silver Bronce Total"
+    header = "#{'Country'.ljust(19)} Gold Silver Bronce Total"
     message = "```\n#{header}\n"
     message += "#{'-' * header.length}\n"
     medals.each do |medal|
