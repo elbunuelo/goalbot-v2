@@ -32,8 +32,11 @@ class Olympics
     messages = []
     message = ''
     events.each do |e|
-      start_date = Time.zone.parse(e['startDate']).strftime('%H:%M:%S')
-      event_message = "[#{start_date}] #{e['disciplineName']} #{e['eventUnitName']}"
+      start_date = Time.zone.parse(e['startDate'])
+      start_time = start_date.strftime('%H:%M:%S')
+      next unless start_date > Time.now
+
+      event_message = "[#{start_time}] #{e['disciplineName']} #{e['eventUnitName']}"
       if e['eventUnitType'] == COMPETITION_TYPE[:Team] && e['competitors'].present?
         competitors = e['competitors']
         event_message += " |  #{competitors[0]['name']} - #{competitors[1]['name']}"
