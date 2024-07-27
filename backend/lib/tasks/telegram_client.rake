@@ -153,8 +153,11 @@ task telegram_client: :environment do
       end
 
       action :olympics, message do
-        message = Olympics.todays_events
-        bot.api.send_message(chat_id:, text: message)
+        messages = Olympics.todays_events
+        messages.each do |message|
+          next if message == ''
+          bot.api.send_message(chat_id:, text: message)
+        end
       end
     end
   end

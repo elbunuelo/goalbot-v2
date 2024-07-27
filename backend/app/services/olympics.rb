@@ -17,7 +17,6 @@ class Olympics
   end
 
   def self.fetch_events(date)
-    pp date
     url = EVENTS_URL.sub '{{date}}', date
     response = get(url)
     response.parsed_response['units']
@@ -30,17 +29,25 @@ class Olympics
   end
 
   def self.events_message(events)
+    messages = []
     message = ''
     events.each do |e|
       start_date = Time.zone.parse(e['startDate']).strftime('%H:%M:%S')
-      message += "[#{start_date}] #{e['disciplineName']} #{e['eventUnitName']}"
+      event_message = "[#{start_date}] #{e['disciplineName']} #{e['eventUnitName']}"
       if e['eventUnitType'] == COMPETITION_TYPE[:Team] && e['competitors'].present?
         competitors = e['competitors']
-        message += " |  #{competitors[0]['name']} - #{competitors[1]['name']}"
+        event_message += " |  #{competitors[0]['name']} - #{competitors[1]['name']}"
       end
-      message += "\n"
+      event_message += "\n"
+      if "#{message}#{event_message}".length > 4096
+        messages << message
+        message = event_message
+      else
+        message += event_message
+      end
     end
+    messages << message
 
-    message
+    messages
   end
 end
