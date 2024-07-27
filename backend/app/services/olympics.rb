@@ -44,12 +44,12 @@ class Olympics
     message = "```\n#{header}\n"
     message += "#{'-' * header.length}\n"
     medals.each do |medal|
-      country_name = if medal['description'].length <= 15
+      country_name = if medal['description'].length <= 19
                        medal['description']
                      else
-                       "#{medal['description'][0..14]}…"
+                       "#{medal['description'][0..18]}…"
                      end
-      country = country_name.ljust(27)
+      country = country_name.ljust(19)
       gold = medal['gold'].to_s.center(4)
       silver = medal['silver'].to_s.center(6)
       bronze = medal['bronze'].to_s.center(6)
