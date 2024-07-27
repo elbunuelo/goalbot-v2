@@ -40,14 +40,14 @@ class Olympics
   end
 
   def self.medals_message(medals)
-    header = "#{'Country'.ljust(27)} Gold Silver Bronce Total"
+    header = "#{'Country'.ljust(19)} Gold Silver Bronce Total"
     message = "```\n#{header}\n"
     message += "#{'-' * header.length}\n"
     medals.each do |medal|
-      country_name = if medal['description'].length <= 27
+      country_name = if medal['description'].length <= 19
                        medal['description']
                      else
-                       "#{medal['description'][0..26]}…"
+                       "#{medal['description'][0..18]}…"
                      end
       country = country_name.ljust(27)
       gold = medal['gold'].to_s.center(4)
