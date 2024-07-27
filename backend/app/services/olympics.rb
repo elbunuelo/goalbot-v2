@@ -1,6 +1,6 @@
 class Olympics
-  BASE_URL = 'https://sph-s-api.olympics.com'
-  EVENTS_URL = "summer/schedules/api/ENG/schedule/day/{{date}}"
+  EVENTS_URL = 'https://sph-s-api.olympics.com/summer/schedules/api/ENG/schedule/day/{{date}}'
+  MEDALS_URL = 'https://sph-i-api.olympics.com/summer/info/api/ENG/widgets/medals-table'
 
   COMPETITION_TYPE = {
    Individual: 'ATH',
@@ -8,7 +8,7 @@ class Olympics
   }
 
   def self.get(url)
-    HTTParty.get("#{BASE_URL}/#{url}", {
+    HTTParty.get(url, {
       headers: {
         'User-Agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:128.0) Gecko/20100101 Firefox/128.0',
         'Accept' => 'application/json'
@@ -26,6 +26,34 @@ class Olympics
     events = fetch_events(Time.now.strftime('%Y-%m-%d'))
 
     events_message events
+  end
+
+  def self.medals
+    medals = fetch_medals
+    medals_message medals
+  end
+
+  def self.fetch_medals
+    response = get(MEDALS_URL)
+
+    response.parsed_response['medalsTable']
+  end
+
+  def self.medals_message(medals)
+    header = "#{'Country'.ljust(15)} Gold Silver Bronce Total"
+    message = "```\n#{header}\n"
+    message += "#{'-' * header.length}\n"
+    medals.each do |medal|
+      country = medal['description'].ljust(15)
+      gold = medal['gold'].to_s.center(4)
+      silver = medal['silver'].to_s.center(6)
+      bronze = medal['bronze'].to_s.center(6)
+      total = medal['total'].to_s.center(5)
+      message += "#{country} #{gold} #{silver} #{bronze} #{total}\n"
+    end
+    message += '```'
+
+    message
   end
 
   def self.events_message(events)

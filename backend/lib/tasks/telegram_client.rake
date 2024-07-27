@@ -5,6 +5,7 @@ HELP_TEXT = <<~HELP
   /seguir_equipo <equipo> - Busca un equipo y sigue todos sus partidos. Admite varios equipos separándolos con coma (,) punto y coma (;) o fin de línea.
   /seguir_torneo <torneo> - Busca un torneo y envia los partidos del dia.
   /olimpicos - Envía los eventos de los olímpicos.
+  /medallas - Envía el top 5 de medallas de los olimpicos.
   /dejar <equipo> - Deja de monitorear un partido.
   /subs - Lista las suscripciones activas.
   /alias <equipo>::<alias> - Crea un alias para un equipo.
@@ -31,7 +32,8 @@ ACTIONS = {
   follow: action_regex(%w[follow seguir folgen], [TELEGRAM_TEAM_REGEX]),
   follow_team: action_regex(%w[follow_team seguir_equipo mannschaft_folgen], [TELEGRAM_TEAM_REGEX]),
   follow_tournament: action_regex(%w[follow_tournament seguir_torneo meisterschaft_folgen], [TELEGRAM_TOURNAMENT_REGEX]),
-  olympics: action_regex(%w[olimpicos]),
+  olympics: action_regex(%w[olimpicos olympics]),
+  medals: action_regex(%w[medals medallas]),
   unfollow: action_regex(%w[unfollow dejar parar unfolgen], [TELEGRAM_TEAM_REGEX]),
   alias: action_regex(%w[alias], [TELEGRAM_ALIAS_REGEX]),
   alias_tournament: action_regex(%w[alias_torneo alias_tournament alias_meisterschaft], [TELEGRAM_TOURNAMENT_ALIAS_REGEX]),
@@ -158,6 +160,11 @@ task telegram_client: :environment do
           next if message == ''
           bot.api.send_message(chat_id:, text: message)
         end
+      end
+
+      action :medals, message do
+        message = Olympics.medals
+        bot.api.send_message(chat_id:, text: message, parse_mode: 'MarkdownV2')
       end
     end
   end
