@@ -32,8 +32,6 @@ ACTIONS = {
   follow: action_regex(%w[follow seguir folgen], [TELEGRAM_TEAM_REGEX]),
   follow_team: action_regex(%w[follow_team seguir_equipo mannschaft_folgen], [TELEGRAM_TEAM_REGEX]),
   follow_tournament: action_regex(%w[follow_tournament seguir_torneo meisterschaft_folgen], [TELEGRAM_TOURNAMENT_REGEX]),
-  olympics: action_regex(%w[olimpicos olympics]),
-  medals: action_regex(%w[medals medallas]),
   unfollow: action_regex(%w[unfollow dejar parar unfolgen], [TELEGRAM_TEAM_REGEX]),
   alias: action_regex(%w[alias], [TELEGRAM_ALIAS_REGEX]),
   alias_tournament: action_regex(%w[alias_torneo alias_tournament alias_meisterschaft], [TELEGRAM_TOURNAMENT_ALIAS_REGEX]),
@@ -152,19 +150,6 @@ task telegram_client: :environment do
         Rails.logger.info "[Telegram Client] Creating alias #{params[:tournament]} #{params[:alias]}"
         message = AliasManager.create_tournament_alias(params[:tournament], params[:alias])
         bot.api.send_message(chat_id:, text: message)
-      end
-
-      action :olympics, message do
-        messages = Olympics.todays_events
-        messages.each do |message|
-          next if message == ''
-          bot.api.send_message(chat_id:, text: message)
-        end
-      end
-
-      action :medals, message do
-        message = Olympics.medals
-        bot.api.send_message(chat_id:, text: message, parse_mode: 'MarkdownV2')
       end
     end
   end
