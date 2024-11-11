@@ -27,6 +27,15 @@ class EventManager
       Resque.logger.info "[Incident Fetch] Event #{event.slug} hasn't started yet"
       return
     end
+
+    likely_ended = Time.now > (Time.at(event.start_timestamp) + 3.hours)
+    if likely_ended
+      Resque.logger.info "[Incident Fetch] Event #{event.slug} has likely ended, canceling"
+      Resque.remove_schedule(event.schedule_name)
+      event.update(finished: true)
+      return
+    end
+
     incidents = Api::Client.fetch_incidents(event)
 
     Resque.logger.info "[Incident Fetch] Found #{incidents.count} incidents" if incidents

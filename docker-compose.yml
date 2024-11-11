@@ -134,7 +134,7 @@ services:
     env_file:
       - var.env
   db:
-    image: postgres
+    image: postgres:16
     environment:
       - TZ=${TZ}
       - POSTGRES_USER=postgres

@@ -14,8 +14,10 @@ task fetch_goal_video_links: :environment do
     next unless goal
 
     begin
-      home_team_event = EventManager.find_matching(goal[:home_team])
-      away_team_event = EventManager.find_matching(goal[:away_team])
+      home_team = Team.search goal[:home_team]
+      away_team = Team.search goal[:away_team]
+      home_team_event = Event.find_team_event_today home_team
+      away_team_event = Event.find_team_event_today away_team
       next unless home_team_event == away_team_event
     rescue Errors::TeamNotFound
       next
