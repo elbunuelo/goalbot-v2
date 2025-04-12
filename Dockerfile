@@ -1,6 +1,6 @@
-FROM ruby:3.3.6
+FROM ruby:3.3
 
-RUN apt-get update -qq && apt-get install -y build-essential
+RUN apt-get update -qq && apt-get install -y build-essential ruby-nokogiri
 
 ENV APP_HOME /opt/app
 RUN mkdir -p $APP_HOME
@@ -12,6 +12,7 @@ WORKDIR $APP_HOME/backend
 ADD backend/Gemfile $APP_HOME/backend/Gemfile
 ADD backend/Gemfile.lock $APP_HOME/backend/Gemfile.lock
 
+RUN bundle update --bundler
 RUN bundle install
 
 ADD . $APP_HOME
