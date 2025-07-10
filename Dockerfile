@@ -1,7 +1,10 @@
-FROM ruby:3.3
+FROM ruby:3
 
-RUN apt-get update -qq && apt-get install -y build-essential ruby-nokogiri
+ADD ./ruby-compile.sh /tmp
+RUN /tmp/ruby-compile.sh
 
+ENV PKG_CONFIG_PATH /usr/local/include/openssl
+ENV DISABLE_SSL true
 ENV APP_HOME /opt/app
 RUN mkdir -p $APP_HOME
 

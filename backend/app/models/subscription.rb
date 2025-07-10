@@ -4,6 +4,8 @@ class Subscription < ApplicationRecord
   after_save :schedule_incident_fetch
   after_save :schedule_game_start_messages
 
+  has_many :incident_messages, dependent: :delete_all
+
   scope :active, lambda { |service, conversation_id|
     joins(:event)
       .where(

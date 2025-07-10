@@ -337,7 +337,7 @@ DEPENDENCIES
   httparty
   importmap-rails
   jbuilder
-  mono_logger (~> 1.1, >= 1.1.2)
+  mono_logger
   mutex_m
   nokogiri (~> 1.18)
   pg
@@ -345,7 +345,7 @@ DEPENDENCIES
   rails (~> 7.0.3)
   redd!
   resque
-  resque-scheduler (~> 4.11.0)
+  resque-scheduler
   sass-rails
   selenium-webdriver
   sprockets-rails
@@ -358,7 +358,7 @@ DEPENDENCIES
   webdrivers
 
 RUBY VERSION
-   ruby 3.3.8p144
+   ruby 3.4.2p28
 
 BUNDLED WITH
    2.6.7

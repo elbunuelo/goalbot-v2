@@ -18,6 +18,8 @@ task fetch_goal_video_links: :environment do
       away_team = Team.search goal[:away_team]
       home_team_event = Event.find_team_event_today home_team
       away_team_event = Event.find_team_event_today away_team
+      next unless home_team_event
+      next unless away_team_event
       next unless home_team_event == away_team_event
     rescue Errors::TeamNotFound
       next

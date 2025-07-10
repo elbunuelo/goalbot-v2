@@ -2,7 +2,7 @@
 
 git config --global --add safe.directory /opt/app
 cd /opt/app/backend
-# bundle install
+bundle install
 
 rm ./tmp/pids/server.pid
 

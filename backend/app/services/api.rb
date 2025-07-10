@@ -13,16 +13,20 @@ module Api
   MALE = 'M'.freeze
 
   class Client
+    def self.request(url) 
+      HTTParty.get(url)
+    end
+
     def self.fetch_events(date)
       url = Api::EVENTS_URL.sub '{{date}}', date
-      response = HTTParty.get(url)
+      response = self.request(url)
 
       response.parsed_response['events']&.map { |e| Event.from_hash(e) }
     end
 
     def self.fetch_incidents(event)
       url = Api::INCIDENTS_URL.sub '{{match_id}}', event.ss_id.to_s
-      response = HTTParty.get(url)
+      response = self.request(url)
 
       incidents = response.parsed_response['incidents']&.map do |i|
         Incident.from_hash(i.merge({ event: event }))
@@ -36,7 +40,7 @@ module Api
 
     def self.fetch_seasons(tournament)
       url = Api::SEASONS_URL.sub '{{tournament_id}}', tournament.ss_id.to_s
-      response = HTTParty.get(url)
+      response = self.request(url)
 
       seasons = response.parsed_response['seasons']&.map do |s|
         Season.from_hash(s.merge({ tournament: tournament }))
@@ -48,7 +52,7 @@ module Api
     def self.fetch_tournament_todays_events(tournament)
       url = Api::TOURNAMENT_EVENTS_URL.sub('{{tournament_id}}', tournament.ss_id.to_s)
                                       .sub('{{season_id}}', tournament.seasons.current.ss_id.to_s)
-      response = HTTParty.get(url)
+      response = self.request(url)
 
       events = response.parsed_response['events']&.map do |e|
         next unless Time.at(e.fetch('startTimestamp')).to_date == Date.today
@@ -62,7 +66,7 @@ module Api
     def self._search(search, &block)
       sanitized_search = search.gsub('/', ' ')
       url = Api::SEARCH_URL.sub '{{search}}', ERB::Util.url_encode(sanitized_search)
-      response = HTTParty.get(url)
+      response = self.request(url)
 
       Rails.logger.info("Search Response #{response.parsed_response}")
 
@@ -104,10 +108,12 @@ module Api
     def self.near_events(team)
       url = Api::NEAR_EVENTS_URL.sub '{{team_id}}', team.ss_id
       Rails.logger.info "Getting near events from #{url}"
-      response = HTTParty.get(url)
+      response = self.request(url)
       events = response.parsed_response
       previous_event = events['previousEvent']
+      Rails.logger.info "Previous event #{previous_event}"
       next_event = events['nextEvent']
+      Rails.logger.info "Next event #{next_event}"
 
       { previous: previous_event, next: next_event }
     end
