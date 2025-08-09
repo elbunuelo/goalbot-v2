@@ -49,8 +49,8 @@ def action(action_name, message, &block)
 end
 
 def set_locale(message)
-  Rails.logger.info "[Telegram Client] Language code #{message.from.language_code}"
-  new_locale = message.from.language_code[0..1] if message.from.language_code
+  Rails.logger.info "[Telegram Client] Language code #{message.from&.language_code}"
+  new_locale = message.from&.language_code[0..1] if message.from&.language_code
   if I18n.locale_available? new_locale
     I18n.locale = new_locale
   else

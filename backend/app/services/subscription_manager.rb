@@ -59,6 +59,8 @@ class SubscriptionManager
       "#{I18n.t :could_not_destroy_subscription} #{event.title}"
     end
   rescue Errors::EventNotFound => e
+    e.message
+  rescue ActiveRecord::RecordNotFound
     I18n.t :subscription_not_found
   end
 
