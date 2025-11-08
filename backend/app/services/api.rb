@@ -15,7 +15,7 @@ module Api
   MALE = 'M'.freeze
 
   class Client
-    def self.request(url) 
+    def self.request(url)
       HTTParty.get(url)
     end
 
@@ -32,7 +32,7 @@ module Api
 
       incidents_hash = response.parsed_response['incidents']
 
-      File.open(Rails.root.join('incident_files', event.schedule_name), 'w') do |file|
+      File.open(Rails.root.join('incident_files', event.schedule_name), 'r+') do |file|
         content = file.read
         all_incidents = if content
                             JSON.parse(content)
