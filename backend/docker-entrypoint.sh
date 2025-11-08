@@ -4,7 +4,9 @@ git config --global --add safe.directory /opt/app
 cd /opt/app/backend
 bundle install
 
-rm ./tmp/pids/server.pid
+if [ -f "./tmp/pids/server.pid" ]; then
+  rm ./tmp/pids/server.pid
+fi
 
 if [ "$CREATE_DB" = 'true' ]; then
   echo "Preparing database"

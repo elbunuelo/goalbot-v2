@@ -1,4 +1,4 @@
-FROM ruby:3
+FROM ruby:3.3.8
 
 ADD ./ruby-compile.sh /tmp
 RUN /tmp/ruby-compile.sh
