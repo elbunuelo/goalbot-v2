@@ -1,6 +1,10 @@
+# When adding any new daily subscriptions, remember to add them to
+# the CleanupSubscriptions exception list.
 DailySubscribe:
   cron: "0 3 * * *"
 SendNextDayMessages:
   cron: "0 19 * * *"
 SendTournamentTodayMessages:
   cron: "0 7 * * *"
+CleanupSubscriptions:
+  cron: "49 23 * * *"
