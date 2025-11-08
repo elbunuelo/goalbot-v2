@@ -32,16 +32,20 @@ module Api
 
       incidents_hash = response.parsed_response['incidents']
 
-      File.open(Rails.root.join('incident_files', event.schedule_name), 'r+') do |file|
-        content = file.read
-        all_incidents = if content
+      begin
+        File.open(Rails.root.join('incident_files', event.schedule_name), 'r+') do |file|
+          content = file.read
+          all_incidents = if content.empty?
+                            []
+                          else
                             JSON.parse(content)
-                        else
-                          []
-                        end
+                          end
 
-        all_incidents << incidents_hash
-        file.write all_incidents.to_json
+          all_incidents << incidents_hash
+          file.write all_incidents.to_json
+        end
+      rescue StandardError => e
+        Rails.logger.info("[API] Error in incident file for #{event.schedule_name}: #{e}")
       end
 
       incidents = incidents_hash&.map do |i|
