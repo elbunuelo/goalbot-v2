@@ -1,3 +1,5 @@
+require 'json'
+
 module Api
   BASE_URL = configatron.api.url
   EVENTS_URL = "#{BASE_URL}/api/v1/sport/football/scheduled-events/{{date}}".freeze
@@ -28,7 +30,21 @@ module Api
       url = Api::INCIDENTS_URL.sub '{{match_id}}', event.ss_id.to_s
       response = self.request(url)
 
-      incidents = response.parsed_response['incidents']&.map do |i|
+      incidents_hash = response.parsed_response['incidents']
+
+      File.open(Rails.root.join('incident_files', event.schedule_name), 'w') do |file|
+        content = file.read
+        all_incidents = if content
+                            JSON.parse(content)
+                        else
+                          []
+                        end
+
+        all_incidents << incidents_hash
+        file.write all_incidents.to_json
+      end
+
+      incidents = incidents_hash&.map do |i|
         Incident.from_hash(i.merge({ event: event }))
       rescue ActiveRecord::RecordInvalid
         Rails.logger.info("Incident with id #{i['id']} already exists, ignoring")
