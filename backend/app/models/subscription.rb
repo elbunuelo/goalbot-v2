@@ -28,7 +28,7 @@ class Subscription < ApplicationRecord
     Rails.logger.info("[Subscription] It is #{Time.now}, the event starts at #{Time.at(event.start_timestamp)}")
     if Time.now.to_i < event.start_timestamp
       Rails.logger.info("[Subscription] Fetching will start at #{Time.at(event.start_timestamp)}")
-      every = [every, { first_at: Time.at(event.start_timestamp) }]
+      every = [every, { first_at: Time.at(event.start_timestamp + rand(0..59)) }]
     end
 
     Rails.logger.info("[Subscription] Scheduling incident fetch for #{event.schedule_name}")
