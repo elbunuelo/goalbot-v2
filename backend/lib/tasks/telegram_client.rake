@@ -4,8 +4,6 @@ HELP_TEXT = <<~HELP
   /seguir <equipo> - Busca y monitorea un partido. Admite varios equipos separándolos con coma (,) punto y coma (;) o fin de línea.
   /seguir_equipo <equipo> - Busca un equipo y sigue todos sus partidos. Admite varios equipos separándolos con coma (,) punto y coma (;) o fin de línea.
   /seguir_torneo <torneo> - Busca un torneo y envia los partidos del dia.
-  /olimpicos - Envía los eventos de los olímpicos.
-  /medallas - Envía el top 5 de medallas de los olimpicos.
   /dejar <equipo> - Deja de monitorear un partido.
   /subs - Lista las suscripciones activas.
   /alias <equipo>::<alias> - Crea un alias para un equipo.
